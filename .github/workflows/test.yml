@@ -1,0 +1,38 @@
+name: Unit tests
+
+on:
+  push:
+    branches: ["develop"]
+  pull_request:
+    branches: ["develop"]
+
+env:
+  DEBUG: "True"
+  DATABASE_URL: "postgres://postgres:postgres@postgres:5432/test_soundradix"
+  SECRET_KEY: "unit-tests"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_soundradix
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    strategy:
+      max-parallel: 4
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: astral-sh/setup-uv@v3
+      - run: uv python install
+      - run: uv sync --group dev
+      - run: uv run ./manage.py test --noinput
