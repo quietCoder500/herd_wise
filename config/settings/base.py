@@ -34,6 +34,8 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     # Project Apps
     "apps.users",
+    "apps.pages",
+    "apps.management"
     # Django Apps
     "django.contrib.admin",
     "django.contrib.auth",
