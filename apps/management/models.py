@@ -41,13 +41,13 @@ class Animal(models.Model):
         ("BS", "Breed Sheep"),
     ]
     category = models.CharField(max_length=3, null=False, blank=False, choices=ANIMAL_CATEGORY)
-    breed = models.CharField(max_length=200, null=True)
+    breed = models.CharField(max_length=200, null=True, blank=True)
 
-    date_of_birth = models.DateField(null=True)
-    age = models.IntegerField(null=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    age = models.IntegerField(null=True, blank= True)
 
     name = models.CharField(max_length=50, blank=True, null=True)
-    tag_id = models.UUIDField(verbose_name="Tag UUID", unique=True, null=True, blank=False)
+    tag_id = models.UUIDField(verbose_name="Tag UUID", unique=True, null=True, blank=True)
 
     group = models.ForeignKey(AnimalGroup, verbose_name="Belongs to group: ", related_name="animals", on_delete=models.PROTECT)
 
