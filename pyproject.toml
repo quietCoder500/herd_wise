@@ -13,6 +13,7 @@ dependencies = [
 dev = [
     "django-extensions>=4.1",
     "ruff>=0.15.9",
+    "werkzeug>=3.1.8",
 ]
 
 [tool.ruff]
