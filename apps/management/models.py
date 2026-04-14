@@ -11,6 +11,8 @@ class Farm(models.Model):
     public_id = ShortUUIDField(unique=True, editable=False, default=shortuuid.uuid)
     users = models.ManyToManyField(User)
 
+    def users_list(self):
+        return "\n".join([u.username for u in self.users.all()])
 
 class AnimalGroup(models.Model):
     NAMING_SCHEMA = [
@@ -23,10 +25,7 @@ class AnimalGroup(models.Model):
     farm = models.ForeignKey(Farm, on_delete=models.PROTECT, related_name="animal_groups")
     animal_naming_schema = models.CharField(max_length=2, choices=NAMING_SCHEMA)
 
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        super(AnimalGroup, self).save(*args, **kwargs)
+
         
 
 
@@ -63,7 +62,7 @@ class Animal(models.Model):
         ("BS", "Breed Sheep"),
     ]
 
-    public_id = ShortUUIDField(unique=True, editable=False, default=shortuuid.uuid)
+    public_id = ShortUUIDField(unique=True, default=shortuuid.uuid)
 
     category = models.CharField(max_length=3, null=False, blank=False, choices=ANIMAL_CATEGORY)
     breed = models.CharField(max_length=200, null=True, blank=True)
