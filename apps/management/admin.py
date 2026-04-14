@@ -31,5 +31,5 @@ class AnimalAdmin(admin.ModelAdmin):
         )
     ]
     readonly_fields = ("public_id", "id")
-    list_display = ["name", "group__name", "category", "public_id"]
+    list_display = ["formatted_name", "name", "group__name", "category", "public_id"]
     list_filter = ["category"]

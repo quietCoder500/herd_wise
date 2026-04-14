@@ -1,30 +1,43 @@
 from django.db import models
-from django.utils.text import slugify
 from django_extensions.db.fields import ShortUUIDField
 from apps.users.models import User
 
 import shortuuid
 import uuid
 
+def gen_name_from_schema(obj, schema: str) -> str:
+    if schema == "IC":
+        return f"No. {obj.id} - {obj.get_category_display()}"
+    elif schema == "AN":
+        return f"{obj.name}"
+    elif schema == "BI":
+        return f"{obj.breed} - {obj.id}"
+    raise ValueError(f"Animal group naming schema ID, \"{schema}\", is not a valid Animal naming schema")
+
 class Farm(models.Model):
     name = models.CharField(verbose_name="name",max_length=100)
     public_id = ShortUUIDField(unique=True, editable=False, default=shortuuid.uuid)
     users = models.ManyToManyField(User)
 
-    def users_list(self):
+    def users_list(self) -> str:
         return "\n".join([u.username for u in self.users.all()])
+    
+    def __str__(self) -> str:
+        return self.name
 
 class AnimalGroup(models.Model):
     NAMING_SCHEMA = [
-        ("CI", "<Animal Category> - <Animal Number>"),
+        ("IC", "<Animal Number> - <Animal Category>"),
         ("AN", "<Animal Name>"),
         ("BI", "<Animal Breed> - <Animal Number>")
     ]
     name = models.CharField(max_length=100)
     public_id = ShortUUIDField(unique=True, editable=False, default=shortuuid.uuid)
     farm = models.ForeignKey(Farm, on_delete=models.PROTECT, related_name="animal_groups")
-    animal_naming_schema = models.CharField(max_length=2, choices=NAMING_SCHEMA)
+    animal_naming_schema = models.CharField(max_length=2, choices=NAMING_SCHEMA, default="IC")
 
+    def __str__(self) -> str:
+        return str(self.name)
 
         
 
@@ -75,3 +88,9 @@ class Animal(models.Model):
 
     group = models.ForeignKey(AnimalGroup, verbose_name="Belongs to group: ", related_name="animals", on_delete=models.PROTECT)
 
+    @property
+    def formatted_name(self):
+        return gen_name_from_schema(self, self.group.animal_naming_schema)
+
+    def __str__(self) -> str:
+        return self.formatted_name
