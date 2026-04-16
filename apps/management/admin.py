@@ -38,7 +38,7 @@ class AnimalAdmin(admin.ModelAdmin):
     list_display = ["formatted_name", "name", "group__name", "category", "public_id"]
     list_filter = ["category"]
 
-    def get_form(self, request: HttpRequest, obj: Any | None = ..., *args, **kwargs: Any):
+    def get_form(self, request: HttpRequest, obj: Any | None = ..., *args, **kwargs: Any) -> type[ModelForm]:
         form = super().get_form(request, obj, *args, **kwargs)
         form.base_fields["group_index"].required = False # type: ignore
         return form
