@@ -1,3 +1,5 @@
+from typing import Iterable
+
 from django.db import models
 from django_extensions.db.fields import ShortUUIDField
 from apps.users.models import User
@@ -14,12 +16,6 @@ def gen_name_from_schema(obj, schema: str) -> str:
         return f"{obj.breed} - {obj.group_index}"
     raise ValueError(f"Animal group naming schema ID, \"{schema}\", is not a valid Animal naming schema")
 
-def increment_animal_group_index():
-    largest = Animal.objects.all().order_by("group_index").last()
-
-    if not largest:
-        return 1
-    return largest.group_index + 1
 
 class Farm(models.Model):
     name = models.CharField(verbose_name="name",max_length=100)
@@ -92,7 +88,7 @@ class Animal(models.Model):
     tag_id = models.UUIDField(verbose_name="Tag UUID", unique=True, null=True, blank=True, default=uuid.uuid4)
 
     group = models.ForeignKey(AnimalGroup, verbose_name="Belongs to group: ", related_name="animals", on_delete=models.PROTECT)
-    group_index = models.SmallIntegerField(default=increment_animal_group_index)
+    group_index = models.SmallIntegerField()
 
     @property
     def formatted_name(self):
@@ -100,6 +96,17 @@ class Animal(models.Model):
 
     def __str__(self) -> str:
         return self.formatted_name
+    
+    def save(self, *args, **kwargs) -> None:
+        if not self.id: # pyright: ignore[reportAttributeAccessIssue]
+            # Incrementing logic for group_index
+            largest = Animal.objects.all().order_by("group_index").last()
+            if not largest:
+                self.group_index = 1
+            else:
+                self.group_index = largest.group_index + 1
+
+        return super(Animal, self).save(*args, **kwargs)
     
     class Meta:
         constraints = [
