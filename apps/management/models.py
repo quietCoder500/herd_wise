@@ -1,5 +1,3 @@
-from typing import Iterable
-
 from django.db import models
 from django_extensions.db.fields import ShortUUIDField
 from apps.users.models import User
@@ -100,7 +98,7 @@ class Animal(models.Model):
     def save(self, *args, **kwargs) -> None:
         if not self.id: # pyright: ignore[reportAttributeAccessIssue]
             # Incrementing logic for group_index
-            largest = Animal.objects.all().order_by("group_index").last()
+            largest = Animal.objects.filter(group=self.group).order_by("group_index").last()
             if not largest:
                 self.group_index = 1
             else:
