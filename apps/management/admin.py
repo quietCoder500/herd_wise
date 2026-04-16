@@ -1,4 +1,8 @@
+from typing import Any
+
 from django.contrib import admin
+from django.forms.models import ModelForm
+from django.http import HttpRequest
 from apps.management.models import Farm, AnimalGroup, Animal
 
 # Register your models here.
@@ -26,10 +30,15 @@ class AnimalAdmin(admin.ModelAdmin):
             {
                 "classes": ["collapse"],
                 "description": "Do not modify unless you know what you are doing!",
-                "fields": ["tag_id", "public_id", "id"]
+                "fields": ["group_index","tag_id", "public_id", "id"]
             }
         )
     ]
     readonly_fields = ("public_id", "id")
     list_display = ["formatted_name", "name", "group__name", "category", "public_id"]
     list_filter = ["category"]
+
+    def get_form(self, request: HttpRequest, obj: Any | None = ..., *args, **kwargs: Any):
+        form = super().get_form(request, obj, *args, **kwargs)
+        form.base_fields["group_index"].required = False # type: ignore
+        return form
