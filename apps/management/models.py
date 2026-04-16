@@ -7,12 +7,19 @@ import uuid
 
 def gen_name_from_schema(obj, schema: str) -> str:
     if schema == "IC":
-        return f"No. {obj.id} - {obj.get_category_display()}"
+        return f"No. {obj.group_index} - {obj.get_category_display()}"
     elif schema == "AN":
         return f"{obj.name}"
     elif schema == "BI":
-        return f"{obj.breed} - {obj.id}"
+        return f"{obj.breed} - {obj.group_index}"
     raise ValueError(f"Animal group naming schema ID, \"{schema}\", is not a valid Animal naming schema")
+
+def increment_animal_group_index():
+    largest = Animal.objects.all().order_by("group_index").last()
+
+    if not largest:
+        return 1
+    return largest.group_index + 1
 
 class Farm(models.Model):
     name = models.CharField(verbose_name="name",max_length=100)
@@ -38,8 +45,6 @@ class AnimalGroup(models.Model):
 
     def __str__(self) -> str:
         return str(self.name)
-
-        
 
 
 class Animal(models.Model):
@@ -87,6 +92,7 @@ class Animal(models.Model):
     tag_id = models.UUIDField(verbose_name="Tag UUID", unique=True, null=True, blank=True, default=uuid.uuid4)
 
     group = models.ForeignKey(AnimalGroup, verbose_name="Belongs to group: ", related_name="animals", on_delete=models.PROTECT)
+    group_index = models.SmallIntegerField(default=increment_animal_group_index)
 
     @property
     def formatted_name(self):
@@ -94,3 +100,11 @@ class Animal(models.Model):
 
     def __str__(self) -> str:
         return self.formatted_name
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["group", "group_index"],
+                name="unique_index_within_group"
+            )
+        ]
