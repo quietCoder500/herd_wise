@@ -1,3 +1,5 @@
+from config.settings.base import *  # noqa: F403
+
 AUTH_PASSWORD_VALIDATORS = [
     # {
     #     "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -12,3 +14,5 @@ AUTH_PASSWORD_VALIDATORS = [
     #     "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     # },
 ]
+
+INSTALLED_APPS.append("django_extensions")  # noqa: F405

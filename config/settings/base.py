@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     # Project Apps
     "apps.users",
     "apps.pages",
-    "apps.management"
+    "apps.livestock",
     # Django Apps
     "django.contrib.admin",
     "django.contrib.auth",
