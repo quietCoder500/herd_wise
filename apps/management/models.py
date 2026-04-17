@@ -86,7 +86,8 @@ class Animal(models.Model):
     category = models.CharField(max_length=3, null=False, blank=False, choices=ANIMAL_CATEGORY)
     breed = models.CharField(max_length=200, null=True, blank=True)
 
-    date_of_birth = models.DateField("Date of Birth", null=True, blank=True)
+    date_of_birth = models.DateField("Date of Birth (Priority over age value)", null=True, blank=True)
+    date_of_death = models.DateField("Date of Death", null=True, blank=True)
     age = models.IntegerField(null=True, blank=True)
 
     name = models.CharField(max_length=50, blank=True, null=True)
@@ -133,8 +134,8 @@ class Animal(models.Model):
 
         # Below runs on all saves 
         # Age calculation logic
-        if self.date_of_birth is not None and self.age is None:
-            self.age = get_age(self.date_of_birth)
+        if self.date_of_birth is not None:
+            self.age = self.get_current_age()
 
         return super(Animal, self).save(*args, **kwargs)
     

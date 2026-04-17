@@ -22,7 +22,7 @@ class AnimalAdmin(admin.ModelAdmin):
         (
             None, 
             {
-                "fields": ["name", "group", ("category", "breed"), ("date_of_birth", "age")]
+                "fields": ["name", "group", ("category", "breed"), ("date_of_birth", "age"), "date_of_death"]
             }
         ),
         (
@@ -40,5 +40,11 @@ class AnimalAdmin(admin.ModelAdmin):
 
     def get_form(self, request: HttpRequest, obj: Any | None = ..., *args, **kwargs: Any) -> type[ModelForm]:
         form = super().get_form(request, obj, *args, **kwargs)
-        form.base_fields["group_index"].required = False # type: ignore
+        try:
+            form.base_fields["group_index"].required = False # type: ignore
+            if obj.date_of_death is not None: # pyright: ignore[reportOptionalMemberAccess]
+                form.base_fields["date_of_birth"].disabled = True # pyright: ignore[reportAttributeAccessIssue]
+                form.base_fields["age"].disabled = True # pyright: ignore[reportAttributeAccessIssue]
+        except AttributeError:
+            pass
         return form
