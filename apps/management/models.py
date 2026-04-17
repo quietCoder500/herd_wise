@@ -5,6 +5,9 @@ from apps.users.models import User
 import shortuuid
 import uuid
 
+from datetime import date
+from dateutil.relativedelta import relativedelta
+
 def gen_name_from_schema(obj, schema: str) -> str:
     if schema == "IC":
         return f"No. {obj.group_index} - {obj.get_category_display()}"
@@ -14,6 +17,10 @@ def gen_name_from_schema(obj, schema: str) -> str:
         return f"{obj.breed} - {obj.group_index}"
     raise ValueError(f"Animal group naming schema ID, \"{schema}\", is not a valid Animal naming schema")
 
+def get_age(date_of_birth):
+    today = date.today()
+    diff = relativedelta(today, date_of_birth)
+    return diff.years
 
 class Farm(models.Model):
     name = models.CharField(verbose_name="name",max_length=100)
@@ -79,7 +86,7 @@ class Animal(models.Model):
     category = models.CharField(max_length=3, null=False, blank=False, choices=ANIMAL_CATEGORY)
     breed = models.CharField(max_length=200, null=True, blank=True)
 
-    date_of_birth = models.DateField("Use this or age", null=True, blank=True)
+    date_of_birth = models.DateField("Date of Birth", null=True, blank=True)
     age = models.IntegerField(null=True, blank=True)
 
     name = models.CharField(max_length=50, blank=True, null=True)
@@ -91,11 +98,31 @@ class Animal(models.Model):
     @property
     def formatted_name(self):
         return gen_name_from_schema(self, self.group.animal_naming_schema)
+    
+    def get_current_age(self):
+        if self.date_of_birth is not None:
+            dob_age = get_age(self.date_of_birth)
+            if self.age is not None:
+                if self.age == dob_age:
+                    return dob_age
+                elif self.age > dob_age:
+                    raise ValueError("Set animal age is higher than the age from DoB")
+                elif self.age < dob_age:
+                    self.age = dob_age
+                    self.save()
+                    return dob_age
+            else:
+                self.age = dob_age
+                self.save()
+                return dob_age
+        else:
+            return self.age
 
     def __str__(self) -> str:
         return self.formatted_name
     
     def save(self, *args, **kwargs) -> None:
+        # Below runs on first save
         if not self.id: # pyright: ignore[reportAttributeAccessIssue]
             # Incrementing logic for group_index
             largest = Animal.objects.filter(group=self.group).order_by("group_index").last()
@@ -103,6 +130,11 @@ class Animal(models.Model):
                 self.group_index = 1
             else:
                 self.group_index = largest.group_index + 1
+
+        # Below runs on all saves 
+        # Age calculation logic
+        if self.date_of_birth is not None and self.age is None:
+            self.age = get_age(self.date_of_birth)
 
         return super(Animal, self).save(*args, **kwargs)
     
