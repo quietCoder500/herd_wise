@@ -6,40 +6,56 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('management', '0001_initial'),
+        ("management", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='animal',
-            name='date_of_death',
-            field=models.DateField(blank=True, null=True, verbose_name='Date of Death'),
+            model_name="animal",
+            name="date_of_death",
+            field=models.DateField(blank=True, null=True, verbose_name="Date of Death"),
         ),
         migrations.AlterField(
-            model_name='animal',
-            name='date_of_birth',
-            field=models.DateField(blank=True, null=True, verbose_name='Date of Birth'),
+            model_name="animal",
+            name="date_of_birth",
+            field=models.DateField(blank=True, null=True, verbose_name="Date of Birth"),
         ),
         migrations.AlterField(
-            model_name='animal',
-            name='group_index',
-            field=models.SmallIntegerField(verbose_name="The animal's id within its group"),
+            model_name="animal",
+            name="group_index",
+            field=models.SmallIntegerField(
+                verbose_name="The animal's id within its group"
+            ),
         ),
         migrations.AlterField(
-            model_name='animal',
-            name='public_id',
-            field=django_extensions.db.fields.ShortUUIDField(blank=True, default=shortuuid.main.ShortUUID.uuid, editable=False, unique=True),
+            model_name="animal",
+            name="public_id",
+            field=django_extensions.db.fields.ShortUUIDField(
+                blank=True,
+                default=shortuuid.main.ShortUUID.uuid,
+                editable=False,
+                unique=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='animalgroup',
-            name='public_id',
-            field=django_extensions.db.fields.ShortUUIDField(blank=True, default=shortuuid.main.ShortUUID.uuid, editable=False, unique=True),
+            model_name="animalgroup",
+            name="public_id",
+            field=django_extensions.db.fields.ShortUUIDField(
+                blank=True,
+                default=shortuuid.main.ShortUUID.uuid,
+                editable=False,
+                unique=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='farm',
-            name='public_id',
-            field=django_extensions.db.fields.ShortUUIDField(blank=True, default=shortuuid.main.ShortUUID.uuid, editable=False, unique=True),
+            model_name="farm",
+            name="public_id",
+            field=django_extensions.db.fields.ShortUUIDField(
+                blank=True,
+                default=shortuuid.main.ShortUUID.uuid,
+                editable=False,
+                unique=True,
+            ),
         ),
     ]
