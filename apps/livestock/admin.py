@@ -3,7 +3,7 @@ from typing import Any
 from django.contrib import admin
 from django.forms.models import ModelForm
 from django.http import HttpRequest
-from apps.management.models import Farm, AnimalGroup, Animal
+from apps.livestock.models import Farm, AnimalGroup, Animal
 
 
 # Register your models here.
