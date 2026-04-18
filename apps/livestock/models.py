@@ -38,8 +38,12 @@ class Farm(models.Model):
     def __str__(self) -> str:
         return self.name
 
+class ReportableModel(models.Model):
+    # This is a abstract model that allows for the records app
+    # to reference Animal or AnimalGroup from one model relation.
+    pass
 
-class AnimalGroup(models.Model):
+class AnimalGroup(ReportableModel):
     NAMING_SCHEMA = [
         ("IC", "<Animal Number> - <Animal Category>"),
         ("AN", "<Animal Name>"),
@@ -58,7 +62,7 @@ class AnimalGroup(models.Model):
         return str(self.name)
 
 
-class Animal(models.Model):
+class Animal(ReportableModel):
     ANIMAL_CATEGORY = [
         ("MC", "Market Chicken"),
         ("EC", "Exhibition Chicken"),
