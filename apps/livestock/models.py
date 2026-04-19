@@ -42,7 +42,9 @@ class Farm(models.Model):
 class ReportableModel(PolymorphicModel):
     # This is a abstract model that allows for the records app
     # to reference Animal or AnimalGroup from one model relation.
-    pass
+    
+    def __str__(self) -> str:
+        return str(self.get_real_instance())
 
 class AnimalGroup(ReportableModel):
     NAMING_SCHEMA = [

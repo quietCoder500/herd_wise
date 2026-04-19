@@ -3,7 +3,7 @@ from apps.records.models import Note, MedicalRecord, WeightRecord
 # Register your models here.
 @admin.register(Note)
 class NoteAdmin(admin.ModelAdmin):
-    pass
+    list_display = ["slug", "record_link", "user", "created_on", "updated_on"]
 
 @admin.register(MedicalRecord)
 class MedicalRecordAdmin(admin.ModelAdmin):
