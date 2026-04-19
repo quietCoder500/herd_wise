@@ -194,6 +194,19 @@ wheels = [
 ]
 
 [[package]]
+name = "django-polymorphic"
+version = "4.11.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/78/a8/1e3355d85b14fe192c802377bbd6bb3e60410f35aefd0f6b669b7264cf24/django_polymorphic-4.11.2.tar.gz", hash = "sha256:0b16060f50f0f196a8c5141a2f8f7d7d5289e7c78cf81aef2d63ff55762011ca", size = 61767, upload-time = "2026-03-07T16:02:14.2Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3e/17/c56283bead21d36e401d200d04321dd1f788766d330e7e88ae83a52e48e4/django_polymorphic-4.11.2-py3-none-any.whl", hash = "sha256:4bf61d6faec4870aee91b997292be45db3ebbd644dea072607efcee8ca27301a", size = 79070, upload-time = "2026-03-07T16:02:12.94Z" },
+]
+
+[[package]]
 name = "herd-wise"
 version = "0.1.0"
 source = { virtual = "." }
@@ -201,6 +214,7 @@ dependencies = [
     { name = "django" },
     { name = "django-allauth", extra = ["socialaccount"] },
     { name = "django-extensions" },
+    { name = "django-polymorphic" },
     { name = "python-dateutil" },
     { name = "shortuuid" },
 ]
@@ -216,6 +230,7 @@ requires-dist = [
     { name = "django", specifier = ">=6.0.4" },
     { name = "django-allauth", extras = ["socialaccount"], specifier = ">=65.15.1" },
     { name = "django-extensions", specifier = ">=4.1" },
+    { name = "django-polymorphic", specifier = ">=4.11.2" },
     { name = "python-dateutil", specifier = ">=2.9.0.post0" },
     { name = "shortuuid", specifier = ">=1.0.13" },
 ]
@@ -374,6 +389,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/90/76/437d71068094df0726366574cf3432a4ed754217b436eb7429415cf2d480/sqlparse-0.5.5.tar.gz", hash = "sha256:e20d4a9b0b8585fdf63b10d30066c7c94c5d7a7ec47c889a2d83a3caa93ff28e", size = 120815, upload-time = "2025-12-19T07:17:45.073Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/49/4b/359f28a903c13438ef59ebeee215fb25da53066db67b305c125f1c6d2a25/sqlparse-0.5.5-py3-none-any.whl", hash = "sha256:12a08b3bf3eec877c519589833aed092e2444e68240a3577e8e26148acc7b1ba", size = 46138, upload-time = "2025-12-19T07:17:46.573Z" },
+]
+
+[[package]]
+name = "typing-extensions"
+version = "4.15.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/72/94/1a15dd82efb362ac84269196e94cf00f187f7ed21c242792a923cdb1c61f/typing_extensions-4.15.0.tar.gz", hash = "sha256:0cea48d173cc12fa28ecabc3b837ea3cf6f38c6d1136f85cbaaf598984861466", size = 109391, upload-time = "2025-08-25T13:49:26.313Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/18/67/36e9267722cc04a6b9f15c7f3441c2363321a3ea07da7ae0c0707beb2a9c/typing_extensions-4.15.0-py3-none-any.whl", hash = "sha256:f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548", size = 44614, upload-time = "2025-08-25T13:49:24.86Z" },
 ]
 
 [[package]]

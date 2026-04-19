@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "apps.users",
     "apps.pages",
     "apps.livestock",
+    "apps.records",
     # Django Apps
     "django.contrib.admin",
     "django.contrib.auth",
@@ -43,11 +44,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.contenttypes", # Needed for polymorphic
     # Allauth Apps
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
+    # Plugins
+    "polymorphic",
+
 ]
 
 MIDDLEWARE = [
