@@ -4,6 +4,7 @@ from apps.records.models import Note, MedicalRecord, WeightRecord
 @admin.register(Note)
 class NoteAdmin(admin.ModelAdmin):
     list_display = ["slug", "record_link", "user", "created_on", "updated_on"]
+    prepopulated_fields = {"slug": ("title",)}
 
 @admin.register(MedicalRecord)
 class MedicalRecordAdmin(admin.ModelAdmin):
@@ -11,4 +12,4 @@ class MedicalRecordAdmin(admin.ModelAdmin):
 
 @admin.register(WeightRecord)
 class WeightRecordAdmin(admin.ModelAdmin):
-    pass
+    list_display = ["animal", "created_on"]
