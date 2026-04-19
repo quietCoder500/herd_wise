@@ -1,6 +1,7 @@
 from django.db import models
 from django_extensions.db.fields import ShortUUIDField
 from apps.users.models import User
+from polymorphic.models import PolymorphicModel
 
 import shortuuid
 import uuid
@@ -38,7 +39,7 @@ class Farm(models.Model):
     def __str__(self) -> str:
         return self.name
 
-class ReportableModel(models.Model):
+class ReportableModel(PolymorphicModel):
     # This is a abstract model that allows for the records app
     # to reference Animal or AnimalGroup from one model relation.
     pass
@@ -94,7 +95,6 @@ class Animal(ReportableModel):
         ("ML", "Market Lamb"),
         ("BS", "Breed Sheep"),
     ]
-
     public_id = ShortUUIDField(unique=True, default=shortuuid.uuid)
 
     category = models.CharField(
