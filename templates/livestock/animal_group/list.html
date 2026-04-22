@@ -1,0 +1,13 @@
+{% extends 'livestock/layout.html' %}
+
+{% block content %}
+    <main>
+        <ul>
+            {% for animal_group in animal_groups %}
+                <li>
+                    {{ animal_group.name }}
+                </li>
+            {% endfor %}
+        </ul>
+    </main>
+{% endblock content %}
