@@ -3,10 +3,17 @@ from typing import Any
 from django.contrib import admin
 from django.forms.models import ModelForm
 from django.http import HttpRequest
-from apps.livestock.models import Farm, AnimalGroup, Animal
+from apps.livestock.models import Farm, AnimalGroup, Animal, ReportableModel
+from polymorphic.admin import PolymorphicChildModelAdmin, PolymorphicParentModelAdmin, PolymorphicChildModelFilter
 
 
 # Register your models here.
+
+class ReportableModelChildAdmin(PolymorphicChildModelAdmin):
+    """ To be so for real I have no idea what this does... """
+    # base_model = <something maybe?>
+    pass
+
 @admin.register(Farm)
 class FarmAdmin(admin.ModelAdmin):
     list_display = ["name", "users_list", "public_id"]
@@ -14,13 +21,17 @@ class FarmAdmin(admin.ModelAdmin):
 
 
 @admin.register(AnimalGroup)
-class AnimalGroupAdmin(admin.ModelAdmin):
+class AnimalGroupAdmin(ReportableModelChildAdmin):
+    base_model = AnimalGroup
+    show_in_index = True
     list_display = ["name", "farm__name", "public_id"]
     readonly_fields = ("public_id",)
 
 
 @admin.register(Animal)
-class AnimalAdmin(admin.ModelAdmin):
+class AnimalAdmin(ReportableModelChildAdmin):
+    base_model = Animal
+    show_in_index = True
     fieldsets = [
         (
             None,
@@ -59,3 +70,10 @@ class AnimalAdmin(admin.ModelAdmin):
         except AttributeError:
             pass
         return form
+
+@admin.register(ReportableModel)
+class ReportableModelParentAdmin(PolymorphicParentModelAdmin):
+    """ The parent model admin """
+    base_model = ReportableModel
+    child_models = (Animal, AnimalGroup) # type: ignore
+    list_filter = (PolymorphicChildModelFilter,)
