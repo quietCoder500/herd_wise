@@ -3,14 +3,21 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, get_list_or_404, render
 from apps.livestock.models import Farm, Animal, AnimalGroup
 
+#
+# Non-model specific views
+#
+
+def index(request):
+    return render(request, "livestock/index.html")
+
+#
+# Views for models
+#
 
 @login_required
 def farm_list(request):
     # 404 will need to be later removed to show a proper page or redirect if there are no farms
     farms = get_list_or_404(Farm, users=request.user)
-    html = ""
-    for farm in farms:
-        html += f"{farm.name}, "
     return render(request, "livestock/farm/list.html", context={"farms": farms})
 
 @login_required
@@ -26,7 +33,7 @@ def animal_group_list(request, farm_short_uuid):
 @login_required
 def animal_group_detail(request, short_uuid):
     obj = get_object_or_404(AnimalGroup, public_id=short_uuid)
-    return render(request, "livestock/animal_group/detailed.html")
+    return render(request, "livestock/animal_group/detailed.html", context={"animal_group": obj})
 
 @login_required
 def animal_list(request, animal_group_short_uuid):

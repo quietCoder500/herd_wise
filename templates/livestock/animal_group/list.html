@@ -5,7 +5,7 @@
         <ul>
             {% for animal_group in animal_groups %}
                 <li>
-                    {{ animal_group.name }}
+                    <a href="/livestock/animal_group/{{ animal_group.public_id }}/">{{ animal_group.name }}</a>
                 </li>
             {% endfor %}
         </ul>

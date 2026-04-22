@@ -2,6 +2,7 @@ from django.urls import path
 from apps.livestock import views
 
 urlpatterns = [
+    path("", views.index),
     path("farms/", views.farm_list),
     path("farm/<str:short_uuid>/", views.farm_detail),
     path("animal_groups/<str:farm_short_uuid>/", views.animal_group_list),
