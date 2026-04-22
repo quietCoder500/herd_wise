@@ -34,7 +34,7 @@ class Farm(models.Model):
     users = models.ManyToManyField(User)
 
     def users_list(self) -> str:
-        return "\n".join([u.username for u in self.users.all()])
+        return "\n".join([u.username+", " for u in self.users.all()]).rstrip(", ")
 
     def __str__(self) -> str:
         return self.name

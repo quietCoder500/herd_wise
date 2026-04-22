@@ -1,0 +1,13 @@
+{% extends 'livestock/layout.html' %}
+
+{% block content %}
+    <main>
+        <ul>
+            {% for farm in farms %}
+                <li>
+                    {{ farm.name }}
+                </li>
+            {% endfor %}
+        </ul>
+    </main>
+{% endblock content %}
