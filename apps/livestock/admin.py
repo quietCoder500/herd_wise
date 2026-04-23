@@ -4,15 +4,22 @@ from django.contrib import admin
 from django.forms.models import ModelForm
 from django.http import HttpRequest
 from apps.livestock.models import Farm, AnimalGroup, Animal, ReportableModel
-from polymorphic.admin import PolymorphicChildModelAdmin, PolymorphicParentModelAdmin, PolymorphicChildModelFilter
+from polymorphic.admin import (
+    PolymorphicChildModelAdmin,
+    PolymorphicParentModelAdmin,
+    PolymorphicChildModelFilter,
+)
 
 
 # Register your models here.
 
+
 class ReportableModelChildAdmin(PolymorphicChildModelAdmin):
-    """ To be so for real I have no idea what this does... """
+    """To be so for real I have no idea what this does..."""
+
     # base_model = <something maybe?>
     pass
+
 
 @admin.register(Farm)
 class FarmAdmin(admin.ModelAdmin):
@@ -71,9 +78,11 @@ class AnimalAdmin(ReportableModelChildAdmin):
             pass
         return form
 
+
 @admin.register(ReportableModel)
 class ReportableModelParentAdmin(PolymorphicParentModelAdmin):
-    """ The parent model admin """
+    """The parent model admin"""
+
     base_model = ReportableModel
-    child_models = (Animal, AnimalGroup) # type: ignore
+    child_models = (Animal, AnimalGroup)  # type: ignore
     list_filter = (PolymorphicChildModelFilter,)

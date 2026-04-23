@@ -34,17 +34,19 @@ class Farm(models.Model):
     users = models.ManyToManyField(User)
 
     def users_list(self) -> str:
-        return "\n".join([u.username+", " for u in self.users.all()]).rstrip(", ")
+        return "\n".join([u.username + ", " for u in self.users.all()]).rstrip(", ")
 
     def __str__(self) -> str:
         return self.name
 
+
 class ReportableModel(PolymorphicModel):
     # This is a abstract model that allows for the records app
     # to reference Animal or AnimalGroup from one model relation.
-    
+
     def __str__(self) -> str:
         return str(self.get_real_instance())
+
 
 class AnimalGroup(ReportableModel):
     NAMING_SCHEMA = [
