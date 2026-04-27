@@ -1,3 +1,12 @@
 {% extends 'base_layout.html' %}
 
-{% block content %}{% endblock content %}
+{% block body %}
+    <div class="breadcrumbs text-sm">
+        <ul>
+        <li><a>Home</a></li>
+        <li><a>Documents</a></li>
+        <li>Add Document</li>
+        </ul>
+    </div>
+    {% block content %}{% endblock content %}
+{% endblock body %}
