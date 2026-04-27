@@ -6,25 +6,42 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('livestock', '0002_alter_animal_public_id_alter_animalgroup_public_id_and_more'),
+        (
+            "livestock",
+            "0002_alter_animal_public_id_alter_animalgroup_public_id_and_more",
+        ),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='animal',
-            name='public_id',
-            field=django_extensions.db.fields.ShortUUIDField(blank=True, default=shortuuid.main.ShortUUID.uuid, editable=False, unique=True),
+            model_name="animal",
+            name="public_id",
+            field=django_extensions.db.fields.ShortUUIDField(
+                blank=True,
+                default=shortuuid.main.ShortUUID.uuid,
+                editable=False,
+                unique=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='animalgroup',
-            name='public_id',
-            field=django_extensions.db.fields.ShortUUIDField(blank=True, default=shortuuid.main.ShortUUID.uuid, editable=False, unique=True),
+            model_name="animalgroup",
+            name="public_id",
+            field=django_extensions.db.fields.ShortUUIDField(
+                blank=True,
+                default=shortuuid.main.ShortUUID.uuid,
+                editable=False,
+                unique=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='farm',
-            name='public_id',
-            field=django_extensions.db.fields.ShortUUIDField(blank=True, default=shortuuid.main.ShortUUID.uuid, editable=False, unique=True),
+            model_name="farm",
+            name="public_id",
+            field=django_extensions.db.fields.ShortUUIDField(
+                blank=True,
+                default=shortuuid.main.ShortUUID.uuid,
+                editable=False,
+                unique=True,
+            ),
         ),
     ]

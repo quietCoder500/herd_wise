@@ -6,42 +6,89 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('livestock', '0001_initial'),
+        ("livestock", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='MedicalRecord',
+            name="MedicalRecord",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('record_link', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='livestock.reportablemodel')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "record_link",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="livestock.reportablemodel",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Note',
+            name="Note",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=70)),
-                ('body', models.TextField()),
-                ('slug', models.CharField(max_length=70)),
-                ('created_on', models.DateTimeField()),
-                ('updated_on', models.DateTimeField(auto_now=True)),
-                ('record_link', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='livestock.reportablemodel')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.RESTRICT, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=70)),
+                ("body", models.TextField()),
+                ("slug", models.CharField(max_length=70)),
+                ("created_on", models.DateTimeField()),
+                ("updated_on", models.DateTimeField(auto_now=True)),
+                (
+                    "record_link",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="livestock.reportablemodel",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.RESTRICT,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='WeightRecord',
+            name="WeightRecord",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_on', models.DateTimeField(auto_now_add=True)),
-                ('weight_in_kg', models.FloatField()),
-                ('animal', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='livestock.animal')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_on", models.DateTimeField(auto_now_add=True)),
+                ("weight_in_kg", models.FloatField()),
+                (
+                    "animal",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="livestock.animal",
+                    ),
+                ),
             ],
         ),
     ]

@@ -15,11 +15,21 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
+from apps.users.views import StandardSignupView
 
 urlpatterns = [
     path("", include("apps.pages.urls")),
     path("admin/", admin.site.urls),
+    path("accounts/signup/", StandardSignupView.as_view(), name="account_signup"),
     path("accounts/", include("allauth.urls")),
+    path("livestock/", include("apps.livestock.urls")),
 ]
+
+if settings.DEBUG:
+    # Include django_browser_reload URLs only in DEBUG mode
+    urlpatterns += [
+        path("__reload__/", include("django_browser_reload.urls")),
+    ]

@@ -1,0 +1,13 @@
+{% extends 'livestock/layout.html' %}
+
+{% block content %}
+    <main>
+        <ul>
+            {% for farm in farms %}
+                <li>
+                    <a href="/livestock/farm/{{ farm.public_id }}/">{{ farm.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </main>
+{% endblock content %}
