@@ -16,3 +16,5 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 INSTALLED_APPS.append("django_extensions")  # noqa: F405
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
