@@ -3,6 +3,7 @@
         "Allauth",
         "dateutil",
         "endfor",
+        "prefersdark",
         "relativedelta",
         "socialaccount"
     ]
