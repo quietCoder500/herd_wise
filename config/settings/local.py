@@ -15,6 +15,14 @@ AUTH_PASSWORD_VALIDATORS = [
     # },
 ]
 
+DEBUG = True
+
 INSTALLED_APPS.append("django_extensions")  # noqa: F405
 
+# Browser reload
+INSTALLED_APPS.append("django_browser_reload")  # noqa: F405
+MIDDLEWARE.insert(0, "django_browser_reload.middleware.BrowserReloadMiddleware")  # noqa: F405
+
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd"

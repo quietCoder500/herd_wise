@@ -23,9 +23,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-b7w1t+10=awgl6)&+qylxsxp-y_o*&kbeup_9lkwk&vs9lb2l0"
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
 ALLOWED_HOSTS = []
 
 
@@ -33,6 +30,8 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     # Project Apps
+    "tailwind",
+    "theme",
     "apps.users",
     "apps.pages",
     "apps.livestock",
@@ -141,3 +140,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = "static/"
+
+TAILWIND_APP_NAME = "theme"
