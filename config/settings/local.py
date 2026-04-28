@@ -25,3 +25,5 @@ MIDDLEWARE.insert(0, "django_browser_reload.middleware.BrowserReloadMiddleware")
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd"
+
+ALLOWED_HOSTS.append("127.0.0.1")  # noqa: F405
