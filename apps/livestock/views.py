@@ -1,7 +1,13 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, get_list_or_404, render
-from apps.livestock.models import Farm, Animal, AnimalGroup
+from django.shortcuts import get_list_or_404, get_object_or_404, render
+
+from apps.livestock.models import Animal, AnimalGroup, Farm
+
+
+class Breadcrumbs:
+    HOME = {"title": "Home", "icon": None, "view": "livestock_index"}
+    FARMS = {"title": "Farms", "icon": None, "view": "farm_list"}
+
 
 #
 # Non-model specific views
@@ -9,7 +15,8 @@ from apps.livestock.models import Farm, Animal, AnimalGroup
 
 
 def index(request):
-    return render(request, "livestock/index.html")
+    breadcrumbs = [Breadcrumbs.HOME]
+    return render(request, "livestock/index.html", context={"breadcrumbs": breadcrumbs})
 
 
 #
@@ -19,15 +26,27 @@ def index(request):
 
 @login_required
 def farm_list(request):
+    breadcrumbs = [Breadcrumbs.HOME, Breadcrumbs.FARMS]
     # 404 will need to be later removed to show a proper page or redirect if there are no farms
     farms = get_list_or_404(Farm, users=request.user)
-    return render(request, "livestock/farm/list.html", context={"farms": farms})
+
+    return render(
+        request,
+        "livestock/farm/list.html",
+        context={"breadcrumbs": breadcrumbs, "farms": farms},
+    )
 
 
 @login_required
 def farm_detail(request, short_uuid):
+    breadcrumbs = [Breadcrumbs.HOME, Breadcrumbs.FARMS]
     obj = get_object_or_404(Farm, public_id=short_uuid)
-    return render(request, "livestock/farm/detailed.html", context={"farm": obj})
+    breadcrumbs.append({"title": obj.name, "icon": None, "url": None})
+    return render(
+        request,
+        "livestock/farm/detailed.html",
+        context={"breadcrumbs": breadcrumbs, "farm": obj},
+    )
 
 
 @login_required

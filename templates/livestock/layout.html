@@ -1,12 +1,11 @@
-{% extends 'base_layout.html' %}
-
-{% block body %}
-    <div class="breadcrumbs text-sm">
-        <ul>
-        <li><a>Home</a></li>
-        <li><a>Documents</a></li>
-        <li>Add Document</li>
-        </ul>
-    </div>
-    {% block content %}{% endblock content %}
-{% endblock body %}
+{% extends 'base_layout.html' %} {% block body %}
+<div class="breadcrumbs text-sm">
+    <ul>
+        {% for breadcrumb in breadcrumbs %}
+        <li>
+            <a href="{% url breadcrumb.view %}">{{ breadcrumb.title }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% block content %}{% endblock content %} {% endblock body %}
