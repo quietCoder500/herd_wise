@@ -18,7 +18,6 @@ import json
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
-
 DEBUG = json.loads(os.getenv("DEBUG", "false"))
 
 # Quick-start development settings - unsuitable for production

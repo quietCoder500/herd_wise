@@ -2,9 +2,9 @@ import os
 from dotenv import load_dotenv
 import json
 
-load_dotenv() 
+load_dotenv()
 try:
-    print("DEBUG VALUE:", json.loads(os.getenv("DEBUG"))) # type: ignore
+    print("DEBUG VALUE:", json.loads(os.getenv("DEBUG")))  # type: ignore
 except TypeError:
     print("DEBUG VALUE:", "None set in .env")
 

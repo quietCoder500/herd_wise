@@ -1,22 +1,18 @@
-{% extends 'livestock/layout.html' %}
-
-/*
-This page will have:
-- a header from layout
-- A welcome for the user
-- a list of links to other farms 
-
-*/
-
-{% block content %}
-    <h2 class="text-5xl ml-12 m-4 text-green-900 font-mono">Hi, {{ user.username }}</h2>
-    <main class="">
-        <ul class="list rounded-2xl m-4 border-gray-400 border-2">
-            {% for farm in farms %}
-                <li class="list-row rounded-none">
-                    <a class="btn" href="/livestock/farm/{{ farm.public_id }}/">{{ farm.name }}</a>
-                </li>
-            {% endfor %}
-        </ul>
-    </main>
+{% extends 'livestock/layout.html' %} /* This page will have: - a header from
+layout - A welcome for the user - a list of links to other farms */ {% block
+content %}
+<h2 class="text-5xl ml-12 m-4 text-green-900 font-mono">
+    Hi, {{ user.username }}
+</h2>
+<main class="">
+    <ul class="list rounded-2xl m-4 border-gray-400 border-2">
+        {% for farm in farms %}
+        <li class="list-row rounded-none">
+            <a class="btn" href="/livestock/farm/{{ farm.public_id }}/"
+                >{{ farm.name }}</a
+            >
+        </li>
+        {% endfor %}
+    </ul>
+</main>
 {% endblock content %}
