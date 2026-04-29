@@ -1,13 +1,13 @@
-from django.db import models
-from django_extensions.db.fields import ShortUUIDField
-from apps.users.models import User
-from polymorphic.models import PolymorphicModel
+import uuid
+from datetime import date
 
 import shortuuid
-import uuid
-
-from datetime import date
 from dateutil.relativedelta import relativedelta
+from django.db import models
+from django_extensions.db.fields import ShortUUIDField
+from polymorphic.models import PolymorphicModel
+
+from apps.users.models import User
 
 
 def gen_name_from_schema(obj, schema: str) -> str:
@@ -37,7 +37,7 @@ class Farm(models.Model):
         return "\n".join([u.username + ", " for u in self.users.all()]).rstrip(", ")
 
     def __str__(self) -> str:
-        return self.name
+        return self.name  # pyright: ignore[reportReturnType]
 
 
 class ReportableModel(PolymorphicModel):

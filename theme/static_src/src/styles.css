@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-    themes: light --default, dark --prefersdark;
+    themes:
+        light --default,
+        dark --prefersdark,
+        forest,
+        dracula,
+        corporate;
 }
 
 /**
@@ -12,4 +17,4 @@
   */
 @source "../../../**/*.{html,py,js}";
 
-@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
