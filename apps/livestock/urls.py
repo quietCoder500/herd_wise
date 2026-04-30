@@ -2,8 +2,10 @@ from django.urls import path
 
 from apps.livestock import views
 
+app_name = "livestock"
+
 urlpatterns = [
-    path("", views.index, name="livestock_index"),
+    path("", views.index, name="index"),
     path("farms/", views.farm_list, name="farm_list"),
     path("farm/<str:short_uuid>/", views.farm_detail, name="farm_detail"),
     path(
