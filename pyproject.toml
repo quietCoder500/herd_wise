@@ -11,6 +11,7 @@ dependencies = [
     "django-extensions>=4.1",
     "django-polymorphic>=4.11.2",
     "django-tailwind[reload]>=4.4.2",
+    "pillow>=12.2.0",
     "python-dateutil>=2.9.0.post0",
     "python-dotenv>=1.2.2",
     "sentry-sdk>=2.58.0",

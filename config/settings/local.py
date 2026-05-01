@@ -27,3 +27,12 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd"
 
 ALLOWED_HOSTS.append("127.0.0.1")  # noqa: F405
+
+MEDIA_ROOT = BASE_DIR / "media"  # noqa: F405
+MEDIA_URL = "/media/"
+
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]

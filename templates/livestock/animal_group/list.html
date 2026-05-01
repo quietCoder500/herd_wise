@@ -1,7 +1,7 @@
 {% extends 'livestock/layout.html' %}
 
 {% block content %}
-    <main class="ml-12 flex flex-col">
+    <main class="mx-12 flex flex-col">
         <h2 class="text-6xl font-mono text-accent">{{ farm.name }}</h2>
         <p class="mb-2 text-2xl text-secondary">
             {{ animal_groups|length }} {{ animal_groups|length|pluralize:"group,groups" }}

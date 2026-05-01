@@ -31,7 +31,11 @@ def get_age(date_of_birth):
 class Farm(models.Model):
     name = models.CharField(verbose_name="name", max_length=100)
     public_id = ShortUUIDField(unique=True, editable=False, default=shortuuid.uuid)
-    users = models.ManyToManyField(User)
+    users = models.ManyToManyField(User, related_name="farms")
+    photo = models.ImageField(upload_to="farm_photos/", null=True, blank=True)
+    location = models.CharField(
+        verbose_name="Location Name or Address", max_length=255, null=True, blank=True
+    )
 
     def users_list(self) -> str:
         return "\n".join([u.username + ", " for u in self.users.all()]).rstrip(", ")
