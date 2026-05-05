@@ -29,8 +29,8 @@
         </svg>
       </div>
       <ul tabindex="-1" class="dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-2xl" data-choose-theme>
-        <li>
-          <label class="w-full btn btn-sm btn-block btn-ghost justify-start">
+        <li data-theme="light">
+          <label class="w-full btn btn-sm btn-block btn-ghost justify-start text-primary">
             <input
               type="radio"
               name="theme-dropdown"
@@ -40,8 +40,19 @@
             <span>Light</span>
           </label>
         </li>
-        <li>
-          <label class="w-full btn btn-sm btn-block btn-ghost justify-start">
+        <li data-theme="corporate">
+          <label class="w-full btn btn-sm btn-block btn-ghost justify-start text-primary">
+            <input
+              type="radio"
+              name="theme-dropdown"
+              class="theme-controller sr-only"
+              aria-label="Corporate"
+              value="corporate" />
+            <span>Corporate</span>
+          </label>
+        </li>
+        <li data-theme="dark">
+          <label class="w-full btn btn-sm btn-block btn-ghost justify-start text-primary">
             <input
               type="radio"
               name="theme-dropdown"
@@ -51,8 +62,8 @@
             <span>Dark</span>
           </label>
         </li>
-        <li>
-          <label class="w-full btn btn-sm btn-block btn-ghost justify-start">
+        <li data-theme="forest">
+          <label class="w-full btn btn-sm btn-block btn-ghost justify-start text-primary">
             <input
               type="radio"
               name="theme-dropdown"
@@ -62,8 +73,8 @@
             <span>Forest</span>
           </label>
         </li>
-        <li>
-          <label class="w-full btn btn-sm btn-block btn-ghost justify-start">
+        <li data-theme="dracula">
+          <label class="w-full btn btn-sm btn-block btn-ghost justify-start text-primary">
             <input
               type="radio"
               name="theme-dropdown"
@@ -71,17 +82,6 @@
               aria-label="Dracula"
               value="dracula" />
             <span>Dracula</span>
-          </label>
-        </li>
-        <li>
-          <label class="w-full btn btn-sm btn-block btn-ghost justify-start">
-            <input
-              type="radio"
-              name="theme-dropdown"
-              class="theme-controller sr-only"
-              aria-label="Corporate"
-              value="corporate" />
-            <span>Corporate</span>
           </label>
         </li>
       </ul>

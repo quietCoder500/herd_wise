@@ -7,11 +7,15 @@
 */
 
 {% block content %}
-<h2 class="text-5xl ml-12 m-4 text-accent font-mono">
-    Hi, {{ user.username }}
-</h2>
-<main class="m-2">
-    <ul class="list rounded-2xl m-4 bg-base-200">
+
+<main class="mx-12 flex flex-col">
+    <h2 class="text-6xl text-accent font-mono">
+        Hi, {{ user.username }}
+    </h2>
+    <p class="mb-2 text-2xl text-secondary">
+        {{ farms|length }} {{ farms|length|pluralize:"farm,farms"}}
+    </p>
+    <ul class="list rounded-2xl my-4 bg-base-200 shadow-2xl">
         {% for farm in farms %}
         <li class="list-row rounded-none">
             <a class="align-middle" href="/livestock/farm/{{ farm.public_id }}/">
