@@ -1,23 +1,149 @@
 {% load static tailwind_tags %}
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <title>
-    {% block title %}
-        Django Tailwind
-    {% endblock title %}
+    <head>
+        <title>
+            {% block title %}Herd Wise - Project Poultry{% endblock title %}
         </title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    {% tailwind_css %}
-</head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <script src="https://kit.fontawesome.com/1534202f2f.js" crossorigin="anonymous"></script>
+        {% tailwind_css %}
+    </head>
 
-<body class="bg-blue-50 text-black font-serif leading-normal tracking-normal">
-<div class="container mx-auto">
-{% block body %}
-Go away, you should probably not be seeing this right now...
-{% endblock body %}
-</div>
-</body>
+    <body
+        class="bg-base-100 text-base-content font-inter leading-normal tracking-normal"
+    >
+        <div class="container mx-auto">
+            <div class="dropdown">
+      <div tabindex="0" role="button" class="btn m-1">
+        Theme
+        <svg
+          width="12px"
+          height="12px"
+          class="inline-block h-2 w-2 fill-current opacity-60"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 2048 2048">
+          <path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z"></path>
+        </svg>
+      </div>
+      <ul tabindex="-1" class="dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-2xl" data-choose-theme>
+        <li data-theme="light">
+          <label class="w-full btn btn-sm btn-block btn-ghost justify-start text-primary">
+            <input
+              type="radio"
+              name="theme-dropdown"
+              class="theme-controller sr-only"
+              aria-label="Light"
+              value="light" />
+            <span>Light</span>
+          </label>
+        </li>
+        <li data-theme="corporate">
+          <label class="w-full btn btn-sm btn-block btn-ghost justify-start text-primary">
+            <input
+              type="radio"
+              name="theme-dropdown"
+              class="theme-controller sr-only"
+              aria-label="Corporate"
+              value="corporate" />
+            <span>Corporate</span>
+          </label>
+        </li>
+        <li data-theme="dark">
+          <label class="w-full btn btn-sm btn-block btn-ghost justify-start text-primary">
+            <input
+              type="radio"
+              name="theme-dropdown"
+              class="theme-controller sr-only"
+              aria-label="Dark"
+              value="dark" />
+            <span>Dark</span>
+          </label>
+        </li>
+        <li data-theme="forest">
+          <label class="w-full btn btn-sm btn-block btn-ghost justify-start text-primary">
+            <input
+              type="radio"
+              name="theme-dropdown"
+              class="theme-controller sr-only"
+              aria-label="Forest"
+              value="forest" />
+            <span>Forest</span>
+          </label>
+        </li>
+        <li data-theme="dracula">
+          <label class="w-full btn btn-sm btn-block btn-ghost justify-start text-primary">
+            <input
+              type="radio"
+              name="theme-dropdown"
+              class="theme-controller sr-only"
+              aria-label="Dracula"
+              value="dracula" />
+            <span>Dracula</span>
+          </label>
+        </li>
+      </ul>
+    </div>
+
+    <script>
+      (function () {
+        const THEME_KEY = 'preferredTheme';
+
+        function setTheme(theme, persist = false) {
+          if (!theme) return;
+          document.documentElement.setAttribute('data-theme', theme);
+          if (persist) {
+            try { localStorage.setItem(THEME_KEY, theme); } catch (e) { /* ignore */ }
+          }
+          // ensure radios reflect current theme
+          document.querySelectorAll('[data-choose-theme] .theme-controller').forEach(function (el) {
+            el.checked = el.value === theme;
+          });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+          const container = document.querySelector('[data-choose-theme]');
+          if (!container) return;
+
+          const controls = container.querySelectorAll('.theme-controller');
+
+          // load saved theme
+          let savedTheme = null;
+          try { savedTheme = localStorage.getItem(THEME_KEY); } catch (e) { /* ignore */ }
+
+          // fallback to system preference or light
+          const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const initial = savedTheme || (prefersDark ? 'dark' : 'light');
+          setTheme(initial, false);
+
+          controls.forEach(function (ctrl) {
+            ctrl.addEventListener('change', function (e) {
+              if (e.target.checked) {
+                setTheme(e.target.value, true);
+              }
+            });
+          });
+
+          // if the user hasn't set a preference, follow system changes
+          if (!savedTheme && window.matchMedia) {
+            const mql = window.matchMedia('(prefers-color-scheme: dark)');
+            const listener = function (e) {
+              setTheme(e.matches ? 'dark' : 'light', false);
+            };
+            if (mql.addEventListener) {
+              mql.addEventListener('change', listener);
+            } else if (mql.addListener) {
+              mql.addListener(listener);
+            }
+          }
+        });
+      })();
+    </script>
+
+            {% block body %} Go away, you should probably not be seeing this
+            right now... {% endblock body %}
+        </div>
+    </body>
 </html>

@@ -1,5 +1,12 @@
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" {
+    themes:
+        light --default,
+        dark --prefersdark,
+        forest,
+        dracula,
+        corporate;
+}
 
 /**
   * A catch-all path to Django template files, JavaScript, and Python files
@@ -9,3 +16,5 @@
   * the scope of this path.
   */
 @source "../../../**/*.{html,py,js}";
+
+@import url("https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");

@@ -12,16 +12,19 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import os
+import json
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
+DEBUG = json.loads(os.getenv("DEBUG", "false"))
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-b7w1t+10=awgl6)&+qylxsxp-y_o*&kbeup_9lkwk&vs9lb2l0"
+SECRET_KEY = str(os.getenv("SECRET_KEY"))
 
 ALLOWED_HOSTS = []
 

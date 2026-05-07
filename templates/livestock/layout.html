@@ -1,12 +1,21 @@
 {% extends 'base_layout.html' %}
 
 {% block body %}
-    <div class="breadcrumbs text-sm">
+    <nav class="breadcrumbs text-sm">
         <ul>
-        <li><a>Home</a></li>
-        <li><a>Documents</a></li>
-        <li>Add Document</li>
+            {% for breadcrumb in breadcrumbs %}
+            <li>
+                {% if forloop.last %}
+                    <span class="breadcrumb-current">{{ breadcrumb.title }}</span>
+                {% else %}
+                    <a href="{{ breadcrumb.url|default:'#' }}">{{ breadcrumb.title }}</a>
+                {% endif %}
+            </li>
+            {% endfor %}
         </ul>
-    </div>
-    {% block content %}{% endblock content %}
+    </nav>
+
+    {% block content %}
+    You really should not be seeing this. If you are, someone goofed.
+    {% endblock content %}
 {% endblock body %}
