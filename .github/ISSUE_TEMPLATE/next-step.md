@@ -1,7 +1,7 @@
 ---
 name: Next Step
 about: What is the next thing I am going to do.
-title: ''
+title: "[STEP] - "
 labels: core
 assignees: quietCoder500
 
