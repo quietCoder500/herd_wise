@@ -1,55 +1,35 @@
-{% extends "livestock/dashboard/layout.html" %}
-
-{% block content %}
-<main
-    class=""
->
-    <div
-        id="box-main"
-        class=""
-    >
-        {% partialdef farm-col inline %}
-            <div
-                class=""
-                id="farm_col"
-            >
-                <h2>Pick a farm</h2>
-                <ul>
-                    {% for farm in farms %}
-                        <a
-                            href="/livestock/farm/{{ farm.public_id }}"
-                            x-target="animal_group_col"
-                        >
-                            <h3>{{ farm.name }}</h3>
-                        </a>
-                    {% endfor %} 
-                </ul>
-            </div>
-        {% endpartialdef farm-col %}
-        {% partialdef animal_group_col inline %}
-            <div
-                class=""
-                id="animal_group_col"
-            >
-                <h2>Pick an animal group</h2>
-                <ul>
-                    {% for group in groups %}
-                        <a
-                            href="/livestock/group/{{ group.public_id }}"
-                            x-target="animal_group_col"
-                        >
-                            <h3>{{ group.name }}</h3>
-                        </a>
-                    {% endfor %} 
-                </ul>
-            </div>
-        {% endpartialdef animal_group_col %}
+{% extends "livestock/dashboard/layout.html" %} {% block content %}
+<main class="flex flex-col h-[calc(100vh-48px)] overflow-hidden">
+  <div id="box-main" class="flex flex-row flex-1 gap-4 mx-12 my-6">
+    {% partialdef farm-col inline %}
+    <div class="border-2 border-base-300 rounded-3xl p-4 overflow-y-auto min-w-56 max-w-7 flex flex-col flex-12" id="farm_col">
+      <h2 class="text-2xl text-primary w-full text-center">Farms</h2>
+      <ul>
+        {% for farm in farms %}
+        <a
+          href="/livestock/farm/{{ farm.public_id }}"
+          x-target="animal_group_col"
+        >
+          <h3>{{ farm.name }}</h3>
+        </a>
+        {% endfor %}
+      </ul>
     </div>
+    {% endpartialdef farm-col %} {% partialdef animal_group_col inline %}
+    <div class="border-2 border-base-300 rounded-3xl p-4 overflow-y-auto min-w-56 max-w-72 flex flex-col flex-1" id="animal_group_col">
+      <h2 class="text-2xl text-primary w-full text-center">Animal Group</h2>
+      <ul>
+        {% for group in groups %}
+        <a
+          href="/livestock/group/{{ group.public_id }}"
+          x-target="animal_group_col"
+        >
+          <h3>{{ group.name }}</h3>
+        </a>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endpartialdef animal_group_col %}
+  </div>
 </main>
-{% endblock content %}
-
-
-{# column partials #}
-
-
-
+{% endblock content %} {# column partials #}
