@@ -4,6 +4,52 @@
 <main
     class=""
 >
-    
+    <div
+        id="box-main"
+        class=""
+    >
+        {% partialdef farm-col inline %}
+            <div
+                class=""
+                id="farm_col"
+            >
+                <h2>Pick a farm</h2>
+                <ul>
+                    {% for farm in farms %}
+                        <a
+                            href="/livestock/farm/{{ farm.public_id }}"
+                            x-target="animal_group_col"
+                        >
+                            <h3>{{ farm.name }}</h3>
+                        </a>
+                    {% endfor %} 
+                </ul>
+            </div>
+        {% endpartialdef farm-col %}
+        {% partialdef animal_group_col inline %}
+            <div
+                class=""
+                id="animal_group_col"
+            >
+                <h2>Pick an animal group</h2>
+                <ul>
+                    {% for group in groups %}
+                        <a
+                            href="/livestock/group/{{ group.public_id }}"
+                            x-target="animal_group_col"
+                        >
+                            <h3>{{ group.name }}</h3>
+                        </a>
+                    {% endfor %} 
+                </ul>
+            </div>
+        {% endpartialdef animal_group_col %}
+    </div>
 </main>
 {% endblock content %}
+
+
+{# column partials #}
+
+
+

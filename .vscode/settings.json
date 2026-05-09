@@ -3,7 +3,9 @@
         "Allauth",
         "dateutil",
         "endfor",
+        "endpartial",
         "relativedelta",
+        "Renskers",
         "socialaccount"
     ]
 }
