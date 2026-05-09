@@ -16,8 +16,10 @@ Including another URLconf
 """
 
 from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+
 from apps.users.views import StandardSignupView
 
 urlpatterns = [
@@ -25,7 +27,10 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/signup/", StandardSignupView.as_view(), name="account_signup"),
     path("accounts/", include("allauth.urls")),
-    path("livestock/", include("apps.livestock.urls")),
+    path(
+        "livestock/",
+        include(("apps.livestock.urls", "livestock"), namespace="livestock"),
+    ),
 ]
 
 if settings.DEBUG:
@@ -33,3 +38,5 @@ if settings.DEBUG:
     urlpatterns += [
         path("__reload__/", include("django_browser_reload.urls")),
     ]
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

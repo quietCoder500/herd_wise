@@ -1,13 +1,13 @@
-from django.db import models
-from django_extensions.db.fields import ShortUUIDField
-from apps.users.models import User
-from polymorphic.models import PolymorphicModel
+import uuid
+from datetime import date
 
 import shortuuid
-import uuid
-
-from datetime import date
 from dateutil.relativedelta import relativedelta
+from django.db import models
+from django_extensions.db.fields import ShortUUIDField
+from polymorphic.models import PolymorphicModel
+
+from apps.users.models import User
 
 
 def gen_name_from_schema(obj, schema: str) -> str:
@@ -31,13 +31,17 @@ def get_age(date_of_birth):
 class Farm(models.Model):
     name = models.CharField(verbose_name="name", max_length=100)
     public_id = ShortUUIDField(unique=True, editable=False, default=shortuuid.uuid)
-    users = models.ManyToManyField(User)
+    users = models.ManyToManyField(User, related_name="farms")
+    photo = models.ImageField(upload_to="farm_photos/", null=True, blank=True)
+    location = models.CharField(
+        verbose_name="Location Name or Address", max_length=255, null=True, blank=True
+    )
 
     def users_list(self) -> str:
         return "\n".join([u.username + ", " for u in self.users.all()]).rstrip(", ")
 
     def __str__(self) -> str:
-        return self.name
+        return self.name  # pyright: ignore[reportReturnType]
 
 
 class ReportableModel(PolymorphicModel):

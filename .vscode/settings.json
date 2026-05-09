@@ -2,8 +2,10 @@
     "cSpell.words": [
         "Allauth",
         "dateutil",
+        "dotenv",
         "endfor",
         "endpartial",
+        "prefersdark",
         "relativedelta",
         "Renskers",
         "socialaccount"
