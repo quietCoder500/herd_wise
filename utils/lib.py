@@ -16,9 +16,11 @@ class AlpineTemplateResponse(BaseTemplateResponse):
         if is_alpine(request):
             # Use the target ID from the request as the partial name.
             # This allows one view to serve multiple, distinct partials.
-            # We fall back to "alpine" as a sensible default.
-            partial = request.headers.get("X-Alpine-Target") or "alpine"
+            partial = request.headers.get("X-Alpine-Target")
+            if not partial:
+                raise ValueError("No 'X-Alpine-Target' in an 'X-Alpine-Request'")    
             return f"{template}#{partial}"
+
         return template
 
     def __init__(self, request: HttpRequest, template: str, *args, **kwargs):

@@ -28,7 +28,7 @@ urlpatterns = [
     path("accounts/signup/", StandardSignupView.as_view(), name="account_signup"),
     path("accounts/", include("allauth.urls")),
     path(
-        "livestock/",
+        "dashboard/",
         include(("apps.livestock.urls", "livestock"), namespace="livestock"),
     ),
 ]

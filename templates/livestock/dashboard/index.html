@@ -7,7 +7,7 @@
       <ul>
         {% for farm in farms %}
         <a
-          href="/livestock/farm/{{ farm.public_id }}"
+          href="{% url 'livestock:farm' farm.public_id %}"
           x-target="animal_group_col"
         >
           <h3>{{ farm.name }}</h3>
@@ -21,8 +21,8 @@
       <ul>
         {% for group in groups %}
         <a
-          href="/livestock/group/{{ group.public_id }}"
-          x-target="animal_group_col"
+          href="{% url 'livestock:group' group.public_id %}"
+          x-target="animals_col"
         >
           <h3>{{ group.name }}</h3>
         </a>
@@ -30,6 +30,21 @@
       </ul>
     </div>
     {% endpartialdef animal_group_col %}
+    {% partialdef animals_col inline %}
+    <div class="border-2 border-base-300 rounded-3xl p-4 overflow-y-auto min-w-56 max-w-72 flex flex-col flex-1" id="animals_col">
+      <h2 class="text-2xl text-primary w-full text-center">Animals</h2>
+      <ul>
+        {% for animal in animals %}
+        <a
+          href="{% url 'livestock:animal' animal.public_id %}"
+          x-target="animal_col"
+        >
+          <h3>{{ animal.formatted_name }}</h3>
+        </a>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endpartialdef animals_col %}
   </div>
 </main>
 {% endblock content %} {# column partials #}
