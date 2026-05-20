@@ -37,7 +37,7 @@ class Farm(models.Model):
         verbose_name="Location Name or Address", max_length=255, null=True, blank=True
     )
 
-    def users_list(self) -> str:
+    def list_users(self) -> str:
         return "\n".join([u.username + ", " for u in self.users.all()]).rstrip(", ")
 
     def __str__(self) -> str:

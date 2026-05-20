@@ -23,7 +23,7 @@ class ReportableModelChildAdmin(PolymorphicChildModelAdmin):
 
 @admin.register(Farm)
 class FarmAdmin(admin.ModelAdmin):
-    list_display = ["name", "users_list", "public_id"]
+    list_display = ["name", "list_users", "public_id"]
     readonly_fields = ("public_id",)
 
 
