@@ -37,7 +37,7 @@
         {% for animal in animals %}
         <a
           href="{% url 'livestock:animal' animal.public_id %}"
-          x-target="animal_col"
+          x-target="detail_col"
         >
           <h3>{{ animal.formatted_name }}</h3>
         </a>
@@ -45,6 +45,8 @@
       </ul>
     </div>
     {% endpartialdef animals_col %}
+    <div id="detail_col">
+    </div>
   </div>
 </main>
 {% endblock content %} {# column partials #}
