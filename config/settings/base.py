@@ -37,8 +37,7 @@ INSTALLED_APPS = [
     "theme",
     "apps.users",
     "apps.pages",
-    "apps.livestock",
-    "apps.records",
+    "apps.portal",
     # Django Apps
     "django.contrib.admin",
     "django.contrib.auth",

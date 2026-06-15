@@ -1,0 +1,28 @@
+{% extends 'portal/layout.html' %}
+
+{% block content %}
+    <div>
+        <div>
+            <form action="{% url 'portal:search' %}" method="get" x-target="results">
+                <div class="bg-base-100 flex flex-row">
+                    <input name="search" type="text" placeholder="Search..." @input.debounce.300ms="$el.form.requestSubmit()">
+                    <button type="submit">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="flex flex-col">
+            {% partialdef results inline %}
+                <ul id="results">
+                    {% for result in results %}
+                        <li class="flex flex-row grow justify-between">
+                            {{ result.name }}
+                        </li>
+                    {% endfor %}
+                </ul>                
+            {% endpartialdef %}
+
+        </div>
+    </div>
+{% endblock content %}
