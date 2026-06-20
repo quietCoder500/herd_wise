@@ -180,3 +180,49 @@ class Animal(ReportableModel):
                 fields=["group", "group_index"], name="unique_index_within_group"
             )
         ]
+
+
+class RecordTemplate(models.Model):
+    """
+    Schema definition model
+
+    Valid syntax:
+    [ # each list item is a form element
+        {
+            "name": name,
+            "label": label,
+            "type": type,
+            "required": required
+        },
+    ]
+
+    name: str
+    label: str
+    type: str Options["number", "date", "boolean", "char", "text"]
+    """
+
+    farm = models.ForeignKey(
+        Farm, on_delete=models.CASCADE, related_name="record_templates"
+    )
+    name = models.CharField(max_length=100)
+    slug = models.SlugField()
+    description = models.TextField(blank=True)
+    schema = models.JSONField()
+
+    def __str__(self) -> str:
+        return self.name
+
+    class Meta:
+        unique_together = ("slug", "farm")
+
+
+class LivestockRecord(models.Model):
+    report_link = models.ForeignKey(ReportableModel, on_delete=models.CASCADE)
+    template = models.ForeignKey(RecordTemplate, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    data = models.JSONField()
+
+    def __str__(self) -> str:
+        return f"{self.template.name} Record for {self.report_link}"

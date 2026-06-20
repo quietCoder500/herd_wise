@@ -7,5 +7,8 @@
         "prefersdark",
         "relativedelta",
         "socialaccount"
-    ]
+    ],
+    "[html]": {
+        "editor.defaultFormatter": "vscode.html-language-features"
+    }
 }

@@ -2,7 +2,7 @@
 # Initial code credits to Kevin Renskers
 # https://www.loopwerk.io/articles/2025/alpine-ajax-django/
 #
- 
+
 from django.template.response import TemplateResponse as BaseTemplateResponse
 from django.http import HttpRequest
 
@@ -18,7 +18,7 @@ class AlpineTemplateResponse(BaseTemplateResponse):
             # This allows one view to serve multiple, distinct partials.
             partial = request.headers.get("X-Alpine-Target")
             if not partial:
-                raise ValueError("No 'X-Alpine-Target' in an 'X-Alpine-Request'")    
+                raise ValueError("No 'X-Alpine-Target' in an 'X-Alpine-Request'")
             return f"{template}#{partial}"
 
         return template
