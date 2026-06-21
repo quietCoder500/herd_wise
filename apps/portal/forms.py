@@ -19,7 +19,6 @@ class DynamicRecordForm(forms.Form):
         self.template = kwargs.pop("template", None)
         self.model_options = kwargs.pop("model_options", None)
         super().__init__(*args, **kwargs)
-
         if self.template and self.template.schema and self.model_options:
             # add initial link model
             self.fields["report_link"] = forms.ModelChoiceField(

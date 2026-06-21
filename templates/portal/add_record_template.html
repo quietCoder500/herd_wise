@@ -1,0 +1,9 @@
+{% extends 'portal/layout.html' %}
+
+{% block content %}
+<form action="{% url 'portal:add_record_template' %}" method="post">
+    Do I really have to put in the work to make this easy to use?
+    {% csrf_token %}
+    <button class="btn btn-primary" type="submit">Create</button>
+</form>
+{% endblock content %}

@@ -47,6 +47,9 @@ class Farm(models.Model):
 class ReportableModel(PolymorphicModel):
     # This is a abstract model that allows for the records app
     # to reference Animal or AnimalGroup from one model relation.
+    farm = models.ForeignKey(
+        Farm, on_delete=models.PROTECT, related_name="animal_groups"
+    )
 
     def __str__(self) -> str:
         return str(self.get_real_instance())
@@ -60,9 +63,6 @@ class AnimalGroup(ReportableModel):
     ]
     name = models.CharField(max_length=100)
     public_id = ShortUUIDField(unique=True, editable=False, default=shortuuid.uuid)
-    farm = models.ForeignKey(
-        Farm, on_delete=models.PROTECT, related_name="animal_groups"
-    )
     animal_naming_schema = models.CharField(
         max_length=2, choices=NAMING_SCHEMA, default="IC"
     )
