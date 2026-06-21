@@ -1,10 +1,11 @@
+from pprint import pprint
+
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.shortcuts import get_list_or_404, get_object_or_404, render
-from django.urls import reverse_lazy as reverse
 from django.db.models import Q
 from itertools import chain
-from operator import attrgetter
 
 from apps.portal.forms import DynamicRecordForm
 from apps.portal.models import (
@@ -23,8 +24,7 @@ def index(request):
     return render(request, "portal/index.html")
 
 
-class Search(View):
-    @login_required
+class Search(LoginRequiredMixin, View):
     def get(self, request):
         query = request.GET.get("search", "").strip()
 
@@ -51,20 +51,17 @@ class Search(View):
         return AlpineTemplateResponse(request, "portal/search.html", context=context)
 
 
-class AddRecordTemplateView(View):
-    @login_required
+class AddRecordTemplateView(LoginRequiredMixin, View):
     def get(self, request):
         # TODO: Handle CSRF token
         return render(request, "portal/add_record_template.html")
 
-    @login_required
     def post(self, request):
 
         return render(request, "portal/add_record_template.html")
 
 
-class AddRecordView(View):
-    @login_required
+class AddRecordView(LoginRequiredMixin, View):
     def get(self, request, template_slug):
         template = get_object_or_404(RecordTemplate, slug=template_slug)
         model_options = ReportableModel.objects.filter(farm__users=request.user)
@@ -74,18 +71,19 @@ class AddRecordView(View):
             request, "portal/add_record.html", {"form": form, "template": template}
         )
 
-    @login_required
     def post(self, request, template_slug):
         template = get_object_or_404(RecordTemplate, slug=template_slug)
-        model_options = get_list_or_404(ReportableModel, farm__users=request.user)
-        form = DynamicRecordForm(template=template, model_options=model_options)
-
+        model_options = ReportableModel.objects.filter(farm__users=request.user)
+        form = DynamicRecordForm(
+            request.POST, template=template, model_options=model_options
+        )
+        pprint(form.data)
         if form.is_valid():
             LivestockRecord.objects.create(
                 report_link=form.cleaned_data.pop("report_link"),
                 template=template,
                 data=form.cleaned_data,
-            )
+            ).save()
 
         return render(
             request, "portal/add_record.html", {"form": form, "template": template}
