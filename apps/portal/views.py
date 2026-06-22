@@ -1,9 +1,7 @@
-from pprint import pprint
-
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
-from django.shortcuts import get_list_or_404, get_object_or_404, render
+from django.shortcuts import get_object_or_404, render
 from django.db.models import Q
 from itertools import chain
 
@@ -77,7 +75,6 @@ class AddRecordView(LoginRequiredMixin, View):
         form = DynamicRecordForm(
             request.POST, template=template, model_options=model_options
         )
-        pprint(form.data)
         if form.is_valid():
             LivestockRecord.objects.create(
                 report_link=form.cleaned_data.pop("report_link"),
