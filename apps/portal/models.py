@@ -191,21 +191,21 @@ class RecordTemplate(models.Model):
         {
             "name": name,
             "label": label,
-            "type": type,
+            "field_type": type,
             "required": required
         },
     ]
 
     name: str
     label: str
-    type: str Options["number", "date", "boolean", "char", "text"]
+    field_type: str Options["number", "date", "boolean", "char", "text"]
     """
 
     farm = models.ForeignKey(
         Farm, on_delete=models.CASCADE, related_name="record_templates"
     )
     name = models.CharField(max_length=100)
-    slug = models.SlugField()
+    slug = models.SlugField(max_length=100)
     description = models.TextField(blank=True)
     schema = models.JSONField()
 

@@ -4,6 +4,7 @@
         "dateutil",
         "dotenv",
         "endfor",
+        "ftype",
         "prefersdark",
         "relativedelta",
         "socialaccount"

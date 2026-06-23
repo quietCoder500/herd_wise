@@ -3,9 +3,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.shortcuts import get_object_or_404, render
 from django.db.models import Q
+from django.utils.text import slugify
 from itertools import chain
 
-from apps.portal.forms import DynamicRecordForm
+from apps.portal.forms import DynamicRecordForm, SchemaFieldFormSet
 from apps.portal.models import (
     Animal,
     AnimalGroup,
@@ -51,10 +52,25 @@ class Search(LoginRequiredMixin, View):
 
 class AddRecordTemplateView(LoginRequiredMixin, View):
     def get(self, request):
-        # TODO: Handle CSRF token
-        return render(request, "portal/add_record_template.html")
+        formset = SchemaFieldFormSet()
+        return render(request, "portal/add_record_template.html", {"formset": formset})
 
     def post(self, request):
+        formset = SchemaFieldFormSet(request.POST)
+        if formset.is_valid():
+            schema_data = []
+
+            for form in formset.ordered_forms:
+                schema_data.append(
+                    {
+                        "name": slugify(form.cleaned_data.get("label")),  # type: ignore
+                        "label": form.cleaned_data.get("label"),
+                        "field_type": form.cleaned_data.get("field_type", "text"),
+                        "required": form.cleaned_data.get("required", True),
+                    }
+                )
+            # For tomorrow me: Add another form using ModelForm for the RecordTemplate model's extra data
+            # then create a validation for the schema, then save the model to the DB. Also, copy django's default form templates and add daisy UI to them.
 
         return render(request, "portal/add_record_template.html")
 

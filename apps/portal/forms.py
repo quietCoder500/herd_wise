@@ -49,10 +49,33 @@ class DynamicRecordForm(forms.Form):
                     self.fields[field_name] = forms.CharField(
                         label=field_label, required=field_required, max_length=255
                     )
-                else:  # field_type == "text" or any other type defaults to text
+                elif field_type == "text":
                     self.fields[field_name] = forms.CharField(
                         label=field_label,
                         required=field_required,
                         widget=forms.Textarea,
                         max_length=1000,
                     )
+                else:
+                    raise ValueError(
+                        f"Dynamic Record Form generation encountered unknown field_type {str(field_type)}"
+                    )
+
+
+class SchemaFieldForm(forms.Form):
+    label = forms.CharField(max_length=100)
+    name = forms.CharField(max_length=100)
+    field_type = forms.ChoiceField(
+        choices=[
+            ("number", "Number"),
+            ("date", "Date"),
+            ("boolean", "Checkbox"),
+            ("char", "Short Text"),
+            ("text", "Long Text"),
+        ],
+        initial="text",
+    )
+    required = forms.BooleanField(initial=True)
+
+
+SchemaFieldFormSet = forms.formset_factory(SchemaFieldForm, extra=1, can_order=True)
