@@ -25,6 +25,7 @@ services:
       - DB_NAME=django_db
       - DB_USER=django_user
       - DB_PASSWORD=${DB_PASSWORD}
+      - ENV_NAME=${ENV_NAME}
     expose:
       - "8000"
     depends_on:
