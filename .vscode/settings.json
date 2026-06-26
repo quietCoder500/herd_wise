@@ -5,6 +5,7 @@
         "dotenv",
         "endfor",
         "ftype",
+        "mediafiles",
         "prefersdark",
         "relativedelta",
         "socialaccount"
