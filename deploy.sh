@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Pulling latest code from Git..."
-git pull origin main
+git pull origin master
 
 echo "Rebuilding and starting containers (uv handling dependencies)..."
 docker compose up -d --build
