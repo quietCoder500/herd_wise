@@ -1,4 +1,14 @@
 services:
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=django_db
+      - POSTGRES_USER=django_user
+      - POSTGRES_PASSWORD=my_secure_password_123
+    ports:
+      - "5432:5432" # Allows you to connect via pgAdmin/DBeaver from your LAN if needed
   web:
     build: .
     command: gunicorn my_project.wsgi:application --bind 0.0.0.0:8000 --workers 3
@@ -11,6 +21,8 @@ services:
       - DEBUG=False
     expose:
       - "8000"
+    depends_on:
+      - db
 
   nginx:
     image: nginx:alpine
@@ -24,5 +36,6 @@ services:
       - web
 
 volumes:
+  postgres_data:
   static_volume:
   media_volume:
