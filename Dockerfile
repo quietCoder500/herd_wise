@@ -17,6 +17,9 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
+    curl \
+    && curl -sL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
 # -------------------------------------------------------------------------
@@ -41,6 +44,8 @@ COPY . /app/
 # Place the uv-created virtual environment at the front of the PATH
 # (Not needed if you used Option B with --system)
 ENV PATH="/app/.venv/bin:$PATH"
+
+RUN uv run manage.py tailwind build
 
 # Expose Gunicorn's port
 EXPOSE 8000
