@@ -6,19 +6,25 @@ services:
     environment:
       - POSTGRES_DB=django_db
       - POSTGRES_USER=django_user
-      - POSTGRES_PASSWORD=my_secure_password_123
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
       - "5432:5432" # Allows you to connect via pgAdmin/DBeaver from your LAN if needed
   web:
     build: .
-    command: gunicorn my_project.wsgi:application --bind 0.0.0.0:8000 --workers 3
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3
     volumes:
       - .:/app
       - /app/.venv # Protects the container's venv from being overwritten by the host
       - static_volume:/app/staticfiles
       - media_volume:/app/mediafiles
     environment:
-      - DEBUG=False
+      - DEBUG=${DEBUG}
+      - SECRET_KEY=${SECRET_KEY}
+      - SENTRY_DSN=${SENTRY_DSN}
+      - DB_HOST=db
+      - DB_NAME=django_db
+      - DB_USER=django_user
+      - DB_PASSWORD=${DB_PASSWORD}
     expose:
       - "8000"
     depends_on:
@@ -27,7 +33,7 @@ services:
   nginx:
     image: nginx:alpine
     ports:
-      - "80:80"
+      - "81:80"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
       - static_volume:/app/staticfiles
