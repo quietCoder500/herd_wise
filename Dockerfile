@@ -9,7 +9,6 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy
-ENV ENV_NAME=Production
 
 # Set the working directory inside the container
 WORKDIR /app
