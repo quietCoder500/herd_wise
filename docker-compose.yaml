@@ -1,0 +1,28 @@
+services:
+  web:
+    build: .
+    command: gunicorn my_project.wsgi:application --bind 0.0.0.0:8000 --workers 3
+    volumes:
+      - .:/app
+      - /app/.venv # Protects the container's venv from being overwritten by the host
+      - static_volume:/app/staticfiles
+      - media_volume:/app/mediafiles
+    environment:
+      - DEBUG=False
+    expose:
+      - "8000"
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - static_volume:/app/staticfiles
+      - media_volume:/app/mediafiles
+    depends_on:
+      - web
+
+volumes:
+  static_volume:
+  media_volume:

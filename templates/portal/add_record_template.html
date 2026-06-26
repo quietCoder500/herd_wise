@@ -1,0 +1,8 @@
+{% extends 'portal/layout.html' %}
+
+{% block content %}
+<form action="{% url 'portal:add_record_template' %}" method="post">
+    {% csrf_token %}
+    <button class="btn btn-primary" type="submit">Create</button>
+</form>
+{% endblock content %}

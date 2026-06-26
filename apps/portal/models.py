@@ -47,6 +47,9 @@ class Farm(models.Model):
 class ReportableModel(PolymorphicModel):
     # This is a abstract model that allows for the records app
     # to reference Animal or AnimalGroup from one model relation.
+    farm = models.ForeignKey(
+        Farm, on_delete=models.PROTECT, related_name="animal_groups"
+    )
 
     def __str__(self) -> str:
         return str(self.get_real_instance())
@@ -60,9 +63,6 @@ class AnimalGroup(ReportableModel):
     ]
     name = models.CharField(max_length=100)
     public_id = ShortUUIDField(unique=True, editable=False, default=shortuuid.uuid)
-    farm = models.ForeignKey(
-        Farm, on_delete=models.PROTECT, related_name="animal_groups"
-    )
     animal_naming_schema = models.CharField(
         max_length=2, choices=NAMING_SCHEMA, default="IC"
     )
@@ -180,3 +180,49 @@ class Animal(ReportableModel):
                 fields=["group", "group_index"], name="unique_index_within_group"
             )
         ]
+
+
+class RecordTemplate(models.Model):
+    """
+    Schema definition model
+
+    Valid syntax:
+    [ # each list item is a form element
+        {
+            "name": name,
+            "label": label,
+            "field_type": type,
+            "required": required
+        },
+    ]
+
+    name: str
+    label: str
+    field_type: str Options["number", "date", "boolean", "char", "text"]
+    """
+
+    farm = models.ForeignKey(
+        Farm, on_delete=models.CASCADE, related_name="record_templates"
+    )
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100)
+    description = models.TextField(blank=True)
+    schema = models.JSONField()
+
+    def __str__(self) -> str:
+        return self.name
+
+    class Meta:
+        unique_together = ("slug", "farm")
+
+
+class LivestockRecord(models.Model):
+    report_link = models.ForeignKey(ReportableModel, on_delete=models.CASCADE)
+    template = models.ForeignKey(RecordTemplate, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    data = models.JSONField()
+
+    def __str__(self) -> str:
+        return f"{self.template.name} Record for {self.report_link}"

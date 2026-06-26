@@ -4,8 +4,13 @@
         "dateutil",
         "dotenv",
         "endfor",
+        "ftype",
+        "mediafiles",
         "prefersdark",
         "relativedelta",
         "socialaccount"
-    ]
+    ],
+    "[html]": {
+        "editor.defaultFormatter": "vscode.html-language-features"
+    }
 }

@@ -3,7 +3,14 @@ from typing import Any
 from django.contrib import admin
 from django.forms.models import ModelForm
 from django.http import HttpRequest
-from apps.livestock.models import Farm, AnimalGroup, Animal, ReportableModel
+from apps.portal.models import (
+    Farm,
+    AnimalGroup,
+    Animal,
+    ReportableModel,
+    RecordTemplate,
+    LivestockRecord,
+)
 from polymorphic.admin import (
     PolymorphicChildModelAdmin,
     PolymorphicParentModelAdmin,
@@ -57,7 +64,7 @@ class AnimalAdmin(ReportableModelChildAdmin):
             {
                 "classes": ["collapse"],
                 "description": "Do not modify unless you know what you are doing!",
-                "fields": ["group_index", "tag_id", "public_id", "id"],
+                "fields": ["group_index", "tag_id", "public_id", "id", "farm"],
             },
         ),
     ]
@@ -86,3 +93,13 @@ class ReportableModelParentAdmin(PolymorphicParentModelAdmin):
     base_model = ReportableModel
     child_models = (Animal, AnimalGroup)  # type: ignore
     list_filter = (PolymorphicChildModelFilter,)
+
+
+@admin.register(RecordTemplate)
+class RecordTemplateAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(LivestockRecord)
+class LivestockRecordAdmin(admin.ModelAdmin):
+    pass
