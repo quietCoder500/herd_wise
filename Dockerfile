@@ -45,7 +45,12 @@ COPY . /app/
 # (Not needed if you used Option B with --system)
 ENV PATH="/app/.venv/bin:$PATH"
 
-RUN uv run manage.py tailwind build
+# Build Tailwind CSS directly with the local npm pipeline for a faster compile.
+WORKDIR /app/theme/static_src
+RUN npm ci --no-audit --no-fund
+RUN npm run build
+
+WORKDIR /app
 
 # Expose Gunicorn's port
 EXPOSE 8000
