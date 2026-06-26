@@ -9,6 +9,8 @@ sentry_sdk.init(
     send_default_pii=True,
 )
 
+ALLOWED_HOSTS = ["localhost", "192.168.1.101", "192.168.0.101"]
+
 # Static files configuration
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")  # noqa: F405
