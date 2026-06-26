@@ -17,15 +17,12 @@ services:
       - /app/.venv # Protects the container's venv from being overwritten by the host
       - static_volume:/app/staticfiles
       - media_volume:/app/mediafiles
+    env_file:
+      - .env
     environment:
-      - DEBUG=${DEBUG}
-      - SECRET_KEY=${SECRET_KEY}
-      - SENTRY_DSN=${SENTRY_DSN}
       - DB_HOST=db
       - DB_NAME=django_db
       - DB_USER=django_user
-      - DB_PASSWORD=${DB_PASSWORD}
-      - ENV_NAME=${ENV_NAME}
     expose:
       - "8000"
     depends_on:
