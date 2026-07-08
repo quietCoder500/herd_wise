@@ -124,7 +124,9 @@ AUTHENTICATION_BACKENDS = [
 
 AUTH_USER_MODEL = "users.User"
 
-LOGIN_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = "/portal/"
+ACCOUNT_LOGOUT_REDIRECT_URL = "/"
+ACCOUNT_SIGNUP_REDIRECT_URL = "/portal/getting-started/"
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/

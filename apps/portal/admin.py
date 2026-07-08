@@ -102,4 +102,4 @@ class RecordTemplateAdmin(admin.ModelAdmin):
 
 @admin.register(LivestockRecord)
 class LivestockRecordAdmin(admin.ModelAdmin):
-    pass
+    readonly_fields = ["public_id"]

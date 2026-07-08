@@ -50,7 +50,7 @@
         <ul id="search_results">
             {% for result in results %}
             <li class="flex flex-row grow justify-between">
-                {{ result.name }}
+                <a href="{% url 'portal' %}">{{ result.name }}</a>
             </li>
             {% endfor %}
         </ul>

@@ -101,3 +101,36 @@ class AddRecordView(LoginRequiredMixin, View):
         return render(
             request, "portal/add_record.html", {"form": form, "template": template}
         )
+
+
+class _RecordField:
+    def __init__(
+        self, name: str, label: str, data_type: str, required: bool, value
+    ) -> None:
+        self.name = name
+        self.label = label
+        self.data_type = data_type
+        self.required = required
+        self.value = value
+
+
+class GetRecordView(LoginRequiredMixin, View):
+    def get(self, request, public_id):
+        record = get_object_or_404(
+            LivestockRecord, report_link__farm__users=request.user, public_id=public_id
+        )
+        fields = []
+        schema = record.template.schema
+        for field in schema:
+            print(field)
+            fields.append(
+                _RecordField(
+                    name=field.get("name"),
+                    label=field.get("label"),
+                    data_type=field.get("field_type"),
+                    required=field.get("required"),
+                    value=record.data.get(field.get("name")),
+                )
+            )
+        context = {"fields": fields, "template_name": record.template.name}
+        return render(request, "portal/models/record_read.html", context=context)

@@ -13,8 +13,13 @@ urlpatterns = [
         name="add_record_template",
     ),
     path(
-        "livestock-record/<slug:template_slug>/",
+        "livestock-record/create/<slug:template_slug>/",
         views.AddRecordView.as_view(),
         name="add_livestock_record",
+    ),
+    path(
+        "livestock-record/view/<uuid:public_id>/",
+        views.GetRecordView.as_view(),
+        name="get_record_view",
     ),
 ]

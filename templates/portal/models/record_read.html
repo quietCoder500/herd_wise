@@ -1,0 +1,15 @@
+{% extends 'portal/layout.html' %}
+
+{% block content %}
+<div>
+    <h2>{{ record.title }}</h2>
+    <p class="text-secondary">{{ template_name }}</p>
+
+    {% for field in fields %}
+    <p>
+        <span>{{ field.name }}</span> : {{ field.value }}
+    </p>
+    {% endfor %}
+
+</div>
+{% endblock content %}

@@ -103,7 +103,7 @@ class Animal(ReportableModel):
         ("ML", "Market Lamb"),
         ("BS", "Breed Sheep"),
     ]
-    public_id = ShortUUIDField(unique=True, default=shortuuid.uuid)
+    public_id = ShortUUIDField(unique=True, default=shortuuid.uuid, editable=False)
 
     category = models.CharField(
         max_length=3, null=False, blank=False, choices=ANIMAL_CATEGORY
@@ -217,6 +217,7 @@ class RecordTemplate(models.Model):
 
 
 class LivestockRecord(models.Model):
+    public_id = models.UUIDField(default=uuid.uuid4, editable=False)
     report_link = models.ForeignKey(ReportableModel, on_delete=models.CASCADE)
     template = models.ForeignKey(RecordTemplate, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
