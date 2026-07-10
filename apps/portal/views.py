@@ -134,3 +134,13 @@ class GetRecordView(LoginRequiredMixin, View):
             )
         context = {"fields": fields, "template_name": record.template.name}
         return render(request, "portal/models/record_read.html", context=context)
+
+
+@login_required
+def farms_list_view(request):
+    return render(request, "portal/farms/farms_list.html")
+
+
+@login_required
+def farms_create_view(request):
+    return render(request, "portal/farms/farms_create.html")

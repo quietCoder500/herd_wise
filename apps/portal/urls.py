@@ -5,21 +5,8 @@ from apps.portal import views
 app_name = "portal"
 
 urlpatterns = [
-    path("", views.index, name="index"),
-    path("search", views.Search.as_view(), name="search"),
-    path(
-        "record-template",
-        views.AddRecordTemplateView.as_view(),
-        name="add_record_template",
-    ),
-    path(
-        "livestock-record/create/<slug:template_slug>/",
-        views.AddRecordView.as_view(),
-        name="add_livestock_record",
-    ),
-    path(
-        "livestock-record/view/<uuid:public_id>/",
-        views.GetRecordView.as_view(),
-        name="get_record_view",
-    ),
+    path("", views.index, name="index_view"),
+    path("search", views.Search.as_view(), name="search_view"),
+    path("farms", views.farms_list_view, name="farms_list_view"),
+    path("farms/create", views.farms_create_view, name="farms_create_view"),
 ]
