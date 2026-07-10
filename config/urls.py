@@ -51,20 +51,21 @@ if settings.DEBUG:
 
 /portal/farms/<str:public_id>/forms               # forms/forms_list.html
 /portal/farms/<str:public_id>/forms/create        # forms/forms_create.html
+/portal/farms/<str:public_id>/forms/<slug:form_slug>        # forms/forms_view.html
 
 /portal/farms/<str:public_id>/herds/              # herds/herds_list.html
 /portal/farms/<str:public_id>/herds/create        # herds/herds_create.html
 /portal/herds/<str:public_id>                     # herds/herds_view.html
 
 /portal/herds/<str:public_id>/records             # records/records_list.html
-/portal/herds/<str:public_id>/records/create      # records/records_create.html 
+/portal/herds/<str:public_id>/records/<slug:form_slug>      # records/records_create.html 
 
 /portal/herds/<str:public_id>/animals/            # animals/animals_list.html
 /portal/herds/<str:public_id>/animals/create      # animals/animals_create.html
 /portal/animals/<str:public_id>                   # animals/animals_view.html
 
 /portal/animals/<str:public_id>/records           # records/records_list.html
-/portal/animals/<str:public_id>/records/create    # records/records_create.html
+/portal/animals/<str:public_id>/records/<slug:form_slug>    # records/records_create.html
 
 /portal/records                                   # records/records_list.html
 /portal/records/<str:public_id>                   # records/records_view.html
