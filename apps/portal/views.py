@@ -1,12 +1,12 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse
 from django.views import View
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_list_or_404, get_object_or_404, redirect, render
 from django.db.models import Q
 from django.utils.text import slugify
-from itertools import chain
 
-from apps.portal.forms import DynamicRecordForm, SchemaFieldFormSet
+from apps.portal.forms import DynamicRecordForm, SchemaFieldFormSet, FarmForm
 from apps.portal.models import (
     Animal,
     AnimalGroup,
@@ -26,24 +26,76 @@ def index(request):
 class Search(LoginRequiredMixin, View):
     def get(self, request):
         query = request.GET.get("search", "").strip()
+        normalized_query = " ".join(query.split()).lower()
 
-        farms = Farm.objects.none()
-        animal_groups = AnimalGroup.objects.none()
-        animals = Animal.objects.none()
-
-        if query:
-            farms = Farm.objects.filter(name__icontains=query)
-            animal_groups = AnimalGroup.objects.filter(name__icontains=query)
-
+        if not normalized_query:
+            results = []
+        else:
+            user_farms = Farm.objects.filter(users=request.user)
+            farms = user_farms.filter(name__icontains=query)
+            animal_groups = AnimalGroup.objects.filter(
+                farm__in=user_farms, name__icontains=query
+            )
             animals = Animal.objects.filter(
                 Q(name__icontains=query)
-                | Q(tag_id__icontains=query)
                 | Q(breed__icontains=query)
-                | Q(group_index__icontains=query)
+                | Q(tag_id__icontains=query)
+                | Q(group_index__icontains=query),
+                farm__in=user_farms,
             )
 
+            def score_result(label: str) -> int:
+                lowered_label = label.lower()
+                if lowered_label == normalized_query:
+                    return 100
+                if lowered_label.startswith(normalized_query):
+                    return 80
+                if normalized_query in lowered_label:
+                    return 60
+                return 0
+
+            results = []
+            for farm in farms:
+                results.append(
+                    {
+                        "label": farm.name,
+                        "kind": "Farm",
+                        "score": score_result(farm.name),
+                        "url": reverse(
+                            "portal:farms_detail_view",
+                            kwargs={"public_id": farm.public_id},
+                        ),
+                    }
+                )
+            for herd in animal_groups:
+                results.append(
+                    {
+                        "label": herd.name,
+                        "kind": "Herd",
+                        "score": score_result(herd.name),
+                        "url": reverse(
+                            "portal:herds_detail_view",
+                            kwargs={"public_id": herd.public_id},
+                        ),
+                    }
+                )
+            for animal in animals:
+                results.append(
+                    {
+                        "label": animal.formatted_name,
+                        "kind": "Animal",
+                        "score": score_result(animal.formatted_name),
+                        "url": reverse(
+                            "portal:animals_detail_view",
+                            kwargs={"public_id": animal.public_id},
+                        ),
+                    }
+                )
+
+            results.sort(key=lambda item: item["score"], reverse=True)
+
         context = {
-            "results": list(chain(farms, animal_groups, animals)),
+            "results": results,
             "filters": {"farms": None, "herds": None, "record_types": None},
         }
 
@@ -138,9 +190,48 @@ class GetRecordView(LoginRequiredMixin, View):
 
 @login_required
 def farms_list_view(request):
-    return render(request, "portal/farms/farms_list.html")
+    farms = get_list_or_404(Farm, users=request.user)
+    return render(request, "portal/farms/farms_list.html", {"farms": farms})
+
+
+@login_required
+def farms_detail_view(request, public_id):
+    farm = get_object_or_404(Farm, public_id=public_id)
+    form = FarmForm(instance=farm)
+    return render(request, "portal/farms/farms_view.html", {"form": form})
+
+
+@login_required
+def herds_detail_view(request, public_id):
+    herd = get_object_or_404(AnimalGroup, public_id=public_id)
+    return render(request, "portal/herds/herds_view.html", {"herd": herd})
+
+
+@login_required
+def animals_detail_view(request, public_id):
+    animal = get_object_or_404(Animal, public_id=public_id)
+    return render(request, "portal/animals/animals_view.html", {"animal": animal})
 
 
 @login_required
 def farms_create_view(request):
-    return render(request, "portal/farms/farms_create.html")
+    if request.method == "POST":
+        form = FarmForm(request.POST)
+        if form.is_valid():
+            new_farm = form.save()
+            new_farm.users.add(request.user)
+            new_farm.save()
+
+            print(new_farm.public_id)
+            return redirect(
+                reverse(
+                    "portal:farms_detail_view", kwargs={"public_id": new_farm.public_id}
+                )
+            )
+        else:
+            return render(
+                request, "portal/farms/farms_create.html", context={"form": form}
+            )
+    else:
+        form = FarmForm()
+        return render(request, "portal/farms/farms_create.html", context={"form": form})

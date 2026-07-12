@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="flex flex-col gap-4">
-    <a href="/portal/search" class="text-6xl text-secondary">Search</a>
+    <a href="{% url 'portal:search_view' %}" class="text-6xl text-secondary">Search</a>
     <a href="/portal/farms" class="text-6xl text-secondary">Farms</a>
 </div>
 {% endblock content %}

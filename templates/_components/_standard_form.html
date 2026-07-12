@@ -1,0 +1,10 @@
+{% for field in form %}
+<label>{{ field.label_tag }}</label>
+<div>{{ field }}</div>
+
+{% if field.errors %}
+<span>{{ field.errors }}</span>
+{% endif %}
+
+{% endfor %}
+<input type="submit" class="btn btn-primary" />

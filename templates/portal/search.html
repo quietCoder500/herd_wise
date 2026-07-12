@@ -3,7 +3,7 @@
 {% block content %}
 <div>
     <div>
-        <form action="{% url 'portal:search' %}" method="get" x-target="search_results">
+        <form action="{% url 'portal:search_view' %}" method="get" x-target="search_results">
             <div class="flex flex-row">
                 <input name="search" placeholder="Search for a farm, herd, animal, or record..."
                     @input.debounce="$el.form.requestSubmit()">
@@ -50,8 +50,11 @@
         <ul id="search_results">
             {% for result in results %}
             <li class="flex flex-row grow justify-between">
-                <a href="{% url 'portal' %}">{{ result.name }}</a>
+                <a href="{{ result.url }}">{{ result.label }} <span class="text-sm opacity-70">
+                        ({{ result.kind }})</span></a>
             </li>
+            {% empty %}
+            <li>No results found.</li>
             {% endfor %}
         </ul>
         {% endpartialdef %}

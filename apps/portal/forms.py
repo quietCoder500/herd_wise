@@ -1,4 +1,5 @@
 from django import forms
+from apps.portal.models import Farm
 
 
 #
@@ -79,3 +80,15 @@ class SchemaFieldForm(forms.Form):
 
 
 SchemaFieldFormSet = forms.formset_factory(SchemaFieldForm, extra=1, can_order=True)
+
+
+class FarmForm(forms.ModelForm):
+    name = forms.CharField(widget=forms.TextInput(attrs={"class": "input"}))
+    location = forms.CharField(widget=forms.TextInput(attrs={"class": "input"}))
+    photo = forms.ImageField(
+        required=False, widget=forms.FileInput(attrs={"class": "file-input"})
+    )
+
+    class Meta:
+        model = Farm
+        fields = ["name", "location", "photo"]

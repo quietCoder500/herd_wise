@@ -7,19 +7,9 @@ HW - Start a Farm
 {% block content %}
 <div>
     <h2 class="text-3xl text-primary">Start a Farm</h2>
-    <form class="flex flex-col gap-4">
-        <div class="flex justify-between">
-            <label class="mx-10" for="name">Name</label>
-            <input name="name" type="text" class="input mx-10" placeholder="Farm name" />
-        </div>
-        <div class="flex justify-between">
-            <label class="mx-10"><i class="fa-solid fa-location-dot"></i>Location</label>
-            <input class="input mx-10" type="text" name="location" placeholder="Location" />
-        </div>
-        <div class="flex justify-between">
-            <label class="mx-10">Photo (Optional)</label>
-            <input class="file-input mx-10" type="file" name="image" placeholder="Location" />
-        </div>
+    <form class="flex flex-col gap-4" method="post" action="/portal/farms/create">
+        {% csrf_token %}
+        {% include '_components/_standard_form.html' %}
     </form>
 </div>
 {% endblock content %}
