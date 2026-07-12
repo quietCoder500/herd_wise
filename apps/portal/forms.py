@@ -1,5 +1,5 @@
 from django import forms
-from apps.portal.models import Farm
+from apps.portal.models import Animal, AnimalGroup, Farm
 
 
 #
@@ -92,3 +92,36 @@ class FarmForm(forms.ModelForm):
     class Meta:
         model = Farm
         fields = ["name", "location", "photo"]
+
+
+class HerdForm(forms.ModelForm):
+    name = forms.CharField(widget=forms.TextInput(attrs={"class": "input"}))
+    animal_naming_schema = forms.ChoiceField(
+        choices=AnimalGroup.NAMING_SCHEMA_CHOICES,
+        initial="sequential",
+        widget=forms.Select(attrs={"class": "select"}),
+    )
+
+    class Meta:
+        model = AnimalGroup
+        fields = ["name", "animal_naming_schema"]
+
+
+class AnimalForm(forms.ModelForm):
+    name = forms.CharField(widget=forms.TextInput(attrs={"class": "input"}))
+    date_of_birth = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}))
+    category = forms.CharField(
+        widget=forms.Select(
+            choices=Animal.ANIMAL_CATEGORY_CHOICES, attrs={"class": "select"}
+        )
+    )
+    breed = forms.CharField(widget=forms.TextInput(attrs={"class": "input"}))
+    sex = forms.ChoiceField(
+        choices=Animal.SEX_CHOICES,
+        initial="U",
+        widget=forms.Select(attrs={"class": "select"}),
+    )
+
+    class Meta:
+        model = Animal
+        fields = ["name", "date_of_birth", "category", "breed", "sex"]

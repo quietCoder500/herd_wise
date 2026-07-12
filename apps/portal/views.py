@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
 from django.http import HttpResponseNotFound
 from django.urls import reverse
 from django.views import View
@@ -7,7 +8,12 @@ from django.shortcuts import get_list_or_404, get_object_or_404, redirect, rende
 from django.db.models import Q
 from django.utils.text import slugify
 
-from apps.portal.forms import DynamicRecordForm, SchemaFieldFormSet, FarmForm
+from apps.portal.forms import (
+    DynamicRecordForm,
+    SchemaFieldFormSet,
+    FarmForm,
+    AnimalForm,
+)
 from apps.portal.models import (
     Animal,
     AnimalGroup,
@@ -69,7 +75,7 @@ class Search(LoginRequiredMixin, View):
                         "score": score_result(farm.name),
                         "url": reverse(
                             "portal:farms_detail_view",
-                            kwargs={"public_id": farm.public_id},
+                            kwargs={"farm_pub_id": farm.public_id},
                         ),
                     }
                 )
@@ -81,7 +87,7 @@ class Search(LoginRequiredMixin, View):
                         "score": score_result(herd.name),
                         "url": reverse(
                             "portal:herds_detail_view",
-                            kwargs={"public_id": herd.public_id},
+                            kwargs={"herd_pub_id": herd.public_id},
                         ),
                     }
                 )
@@ -93,7 +99,7 @@ class Search(LoginRequiredMixin, View):
                         "score": score_result(animal.formatted_name),
                         "url": reverse(
                             "portal:animals_detail_view",
-                            kwargs={"public_id": animal.public_id},
+                            kwargs={"animal_pub_id": animal.public_id},
                         ),
                     }
                 )
@@ -217,14 +223,14 @@ def farms_create_view(request):
     if request.method == "POST":
         form = FarmForm(request.POST)
         if form.is_valid():
-            new_farm = form.save()
-            new_farm.users.add(request.user)
-            new_farm.save()
-
-            print(new_farm.public_id)
+            with transaction.atomic():
+                new_farm = form.save()
+                new_farm.users.add(request.user)
+                new_farm.save()
             return redirect(
                 reverse(
-                    "portal:farms_detail_view", kwargs={"public_id": new_farm.public_id}
+                    "portal:farms_detail_view",
+                    kwargs={"farm_pub_id": new_farm.public_id},
                 )
             )
         else:
@@ -243,12 +249,12 @@ def farms_create_view(request):
 
 @login_required
 def herds_list_view(request, farm_pub_id):
-    return render(request, "portal/herds/herds_list_view.html")
+    return render(request, "portal/herds/herds_list.html")
 
 
 @login_required
 def herds_create_view(request, farm_pub_id):
-    return render(request, "portal/herds/herds_create_view.html")
+    return render(request, "portal/herds/herds_create.html")
 
 
 @login_required
@@ -264,12 +270,40 @@ def herds_detail_view(request, herd_pub_id):
 
 @login_required
 def animals_list_view(request, herd_pub_id):
-    return render(request, "portal/animals/animals_list_view.html")
+    return render(request, "portal/animals/animals_list.html")
 
 
 @login_required
 def animals_create_view(request, herd_pub_id):
-    return render(request, "portal/animals/animals_create_view.html")
+    herd = get_object_or_404(
+        AnimalGroup, farm__users=request.user, public_id=herd_pub_id
+    )
+    if request.method == "POST":
+        form = AnimalForm(request.POST, request.FILES)
+        if form.is_valid():
+            new_animal = form.save(commit=False)
+            new_animal.group = herd
+            new_animal.farm = herd.farm
+            new_animal.save()
+            return redirect(
+                reverse(
+                    "portal:animals_detail_view",
+                    kwargs={"animal_pub_id": new_animal.public_id},
+                )
+            )
+        else:
+            return render(
+                request,
+                "portal/animals/animals_create.html",
+                {"form": form, "herd_pub_id": herd_pub_id},
+            )
+    else:
+        form = AnimalForm()
+        return render(
+            request,
+            "portal/animals/animals_create.html",
+            {"form": form, "herd_pub_id": herd_pub_id},
+        )
 
 
 @login_required

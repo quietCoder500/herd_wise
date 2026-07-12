@@ -21,7 +21,7 @@ class FarmCreateViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(
             response,
-            reverse("portal:farms_detail_view", kwargs={"public_id": farm.public_id}),
+            reverse("portal:farms_detail_view", kwargs={"farm_pub_id": farm.public_id}),
         )
 
 
@@ -47,15 +47,16 @@ class SearchViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            reverse("portal:farms_detail_view", kwargs={"public_id": farm.public_id}),
+            reverse("portal:farms_detail_view", kwargs={"farm_pub_id": farm.public_id}),
         )
         self.assertContains(
             response,
-            reverse("portal:herds_detail_view", kwargs={"public_id": herd.public_id}),
+            reverse("portal:herds_detail_view", kwargs={"herd_pub_id": herd.public_id}),
         )
         self.assertContains(
             response,
             reverse(
-                "portal:animals_detail_view", kwargs={"public_id": animal.public_id}
+                "portal:animals_detail_view",
+                kwargs={"animal_pub_id": animal.public_id},
             ),
         )

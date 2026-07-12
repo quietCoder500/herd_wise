@@ -1,0 +1,15 @@
+{% extends 'portal/layout.html' %}
+
+{% block title %}
+HW - Create a herd
+{% endblock title %}
+
+{% block content %}
+<div>
+    <h2 class="text-3xl text-primary">Create a herd</h2>
+    <form class="flex flex-col gap-4" method="post" action="{% url 'portal:herds_create_view'  %}">
+        {% csrf_token %}
+        {% include '_components/_standard_form.html' %}
+    </form>
+</div>
+{% endblock content %}

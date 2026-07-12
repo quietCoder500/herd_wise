@@ -56,7 +56,7 @@ class ReportableModel(PolymorphicModel):
 
 
 class AnimalGroup(ReportableModel):
-    NAMING_SCHEMA = [
+    NAMING_SCHEMA_CHOICES = [
         ("IC", "<Animal Number> - <Animal Category>"),
         ("AN", "<Animal Name>"),
         ("BI", "<Animal Breed> - <Animal Number>"),
@@ -64,7 +64,7 @@ class AnimalGroup(ReportableModel):
     name = models.CharField(max_length=100)
     public_id = ShortUUIDField(unique=True, editable=False, default=shortuuid.uuid)
     animal_naming_schema = models.CharField(
-        max_length=2, choices=NAMING_SCHEMA, default="IC"
+        max_length=2, choices=NAMING_SCHEMA_CHOICES, default="IC"
     )
 
     def __str__(self) -> str:
@@ -72,7 +72,7 @@ class AnimalGroup(ReportableModel):
 
 
 class Animal(ReportableModel):
-    ANIMAL_CATEGORY = [
+    ANIMAL_CATEGORY_CHOICES = [
         ("MC", "Market Chicken"),
         ("EC", "Exhibition Chicken"),
         ("ED", "Exhibition Duck"),
@@ -103,10 +103,11 @@ class Animal(ReportableModel):
         ("ML", "Market Lamb"),
         ("BS", "Breed Sheep"),
     ]
+    SEX_CHOICES = [("M", "Male"), ("F", "Female"), ("U", "Unknown")]
     public_id = ShortUUIDField(unique=True, default=shortuuid.uuid, editable=False)
 
     category = models.CharField(
-        max_length=3, null=False, blank=False, choices=ANIMAL_CATEGORY
+        max_length=3, null=False, blank=False, choices=ANIMAL_CATEGORY_CHOICES
     )
     breed = models.CharField(max_length=200, null=True, blank=True)
 
@@ -115,6 +116,14 @@ class Animal(ReportableModel):
     )
     date_of_death = models.DateField("Date of Death", null=True, blank=True)
     age = models.IntegerField(null=True, blank=True)
+
+    sex = models.CharField(
+        max_length=1,
+        null=True,
+        blank=True,
+        choices=SEX_CHOICES,
+        default="U",
+    )
 
     name = models.CharField(max_length=50, blank=True, null=True)
     tag_id = models.UUIDField(
@@ -156,6 +165,9 @@ class Animal(ReportableModel):
         return self.formatted_name
 
     def save(self, *args, **kwargs) -> None:
+        if not self.public_id and getattr(self, "group_id", None):
+            self.farm = self.group.farm
+
         # Below runs on first save
         if not self.id:  # pyright: ignore[reportAttributeAccessIssue]
             # Incrementing logic for group_index
