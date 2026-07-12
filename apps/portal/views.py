@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseNotFound
 from django.urls import reverse
 from django.views import View
 from django.shortcuts import get_list_or_404, get_object_or_404, redirect, render
@@ -21,6 +22,11 @@ from utils.lib import AlpineTemplateResponse
 @login_required
 def index(request):
     return render(request, "portal/index.html")
+
+
+@login_required
+def records_list_view(request):
+    return HttpResponseNotFound("No page here yet")
 
 
 class Search(LoginRequiredMixin, View):
@@ -188,6 +194,11 @@ class GetRecordView(LoginRequiredMixin, View):
         return render(request, "portal/models/record_read.html", context=context)
 
 
+#
+# Farms
+#
+
+
 @login_required
 def farms_list_view(request):
     farms = get_list_or_404(Farm, users=request.user)
@@ -195,22 +206,10 @@ def farms_list_view(request):
 
 
 @login_required
-def farms_detail_view(request, public_id):
-    farm = get_object_or_404(Farm, public_id=public_id)
+def farms_detail_view(request, farm_pub_id):
+    farm = get_object_or_404(Farm, public_id=farm_pub_id)
     form = FarmForm(instance=farm)
     return render(request, "portal/farms/farms_view.html", {"form": form})
-
-
-@login_required
-def herds_detail_view(request, public_id):
-    herd = get_object_or_404(AnimalGroup, public_id=public_id)
-    return render(request, "portal/herds/herds_view.html", {"herd": herd})
-
-
-@login_required
-def animals_detail_view(request, public_id):
-    animal = get_object_or_404(Animal, public_id=public_id)
-    return render(request, "portal/animals/animals_view.html", {"animal": animal})
 
 
 @login_required
@@ -235,3 +234,45 @@ def farms_create_view(request):
     else:
         form = FarmForm()
         return render(request, "portal/farms/farms_create.html", context={"form": form})
+
+
+#
+# Herds
+#
+
+
+@login_required
+def herds_list_view(request, farm_pub_id):
+    return render(request, "portal/herds/herds_list_view.html")
+
+
+@login_required
+def herds_create_view(request, farm_pub_id):
+    return render(request, "portal/herds/herds_create_view.html")
+
+
+@login_required
+def herds_detail_view(request, herd_pub_id):
+    herd = get_object_or_404(AnimalGroup, public_id=herd_pub_id)
+    return render(request, "portal/herds/herds_view.html", {"herd": herd})
+
+
+#
+# Animals
+#
+
+
+@login_required
+def animals_list_view(request, herd_pub_id):
+    return render(request, "portal/animals/animals_list_view.html")
+
+
+@login_required
+def animals_create_view(request, herd_pub_id):
+    return render(request, "portal/animals/animals_create_view.html")
+
+
+@login_required
+def animals_detail_view(request, animal_pub_id):
+    animal = get_object_or_404(Animal, public_id=animal_pub_id)
+    return render(request, "portal/animals/animals_view.html", {"animal": animal})
