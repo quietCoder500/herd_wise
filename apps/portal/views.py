@@ -10,6 +10,7 @@ from django.utils.text import slugify
 
 from apps.portal.forms import (
     DynamicRecordForm,
+    HerdForm,
     SchemaFieldFormSet,
     FarmForm,
     AnimalForm,
@@ -254,7 +255,30 @@ def herds_list_view(request, farm_pub_id):
 
 @login_required
 def herds_create_view(request, farm_pub_id):
-    return render(request, "portal/herds/herds_create.html")
+    farm = get_object_or_404(Farm, users=request.user, public_id=farm_pub_id)
+    if request.method == "POST":
+        form = HerdForm(request.POST)
+        if form.is_valid():
+            new_herd = form.save(commit=False)
+            new_herd.farm = farm
+            new_herd.save()
+            return redirect(
+                reverse(
+                    "portal:herds_detail_view",
+                    kwargs={"herd_pub_id": new_herd.public_id},
+                )
+            )
+        else:
+            return render(
+                request,
+                "portal/herds/herds_create.html",
+                {"form": form, "farm_pub_id": farm_pub_id},
+            )
+    return render(
+        request,
+        "portal/herds/herds_create.html",
+        {"form": HerdForm(), "farm_pub_id": farm_pub_id},
+    )
 
 
 @login_required

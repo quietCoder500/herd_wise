@@ -5,9 +5,10 @@ HW - Create a herd
 {% endblock title %}
 
 {% block content %}
-<div>
+<div class="flex flex-col gap-4">
     <h2 class="text-3xl text-primary">Create a herd</h2>
-    <form class="flex flex-col gap-4" method="post" action="{% url 'portal:herds_create_view'  %}">
+    <form class="flex flex-col gap-4" method="post"
+        action="{% url 'portal:herds_create_view' farm_pub_id=farm_pub_id %}">
         {% csrf_token %}
         {% include '_components/_standard_form.html' %}
     </form>

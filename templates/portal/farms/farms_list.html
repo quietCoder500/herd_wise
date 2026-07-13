@@ -14,6 +14,9 @@ HW - My Farms
             <a href="{% url 'portal:herds_list_view' farm_pub_id=farm.public_id %}" class="btn btn-primary">
                 View Herds
             </a>
+            <a href="{% url 'portal:herds_create_view' farm_pub_id=farm.public_id %}" class="btn btn-secondary">
+                Add Herd
+            </a>
             <a href="{% url 'portal:farms_detail_view' farm_pub_id=farm.public_id %}" class="btn btn-ghost">
                 Edit
             </a>
