@@ -1,0 +1,24 @@
+{% extends 'portal/layout.html' %}
+
+{% block title %}
+HW - View Animals
+{% endblock title %}
+
+{% block content %}
+<div>
+    <h2 class="text-3xl text-primary">View Animals</h2>
+    <a href="{% url 'portal:animals_create_view' herd_pub_id=herd_pub_id %}" class="btn btn-primary">
+        Add Animal
+    </a>
+    <ul class="list">
+        {% for animal in animals %}
+        <li class="list-row flex items-center justify-between">
+            {{ animal.name }}
+            <a href="{% url 'portal:animals_detail_view' animal_pub_id=animal.public_id %}" class="btn btn-primary">
+                View Details
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock content %}

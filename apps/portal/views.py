@@ -250,7 +250,13 @@ def farms_create_view(request):
 
 @login_required
 def herds_list_view(request, farm_pub_id):
-    return render(request, "portal/herds/herds_list.html")
+    farm = get_object_or_404(Farm, users=request.user, public_id=farm_pub_id)
+    herds = get_list_or_404(AnimalGroup, farm=farm)
+    return render(
+        request,
+        "portal/herds/herds_list.html",
+        {"herds": herds, "farm_pub_id": farm_pub_id},
+    )
 
 
 @login_required
@@ -284,7 +290,28 @@ def herds_create_view(request, farm_pub_id):
 @login_required
 def herds_detail_view(request, herd_pub_id):
     herd = get_object_or_404(AnimalGroup, public_id=herd_pub_id)
-    return render(request, "portal/herds/herds_view.html", {"herd": herd})
+    form = HerdForm(instance=herd)
+    if request.method == "POST":
+        form = HerdForm(request.POST, instance=herd)
+        if form.is_valid():
+            form.save()
+            return redirect(
+                reverse(
+                    "portal:herds_detail_view",
+                    kwargs={"herd_pub_id": herd.public_id},
+                )
+            )
+        else:
+            return render(
+                request,
+                "portal/herds/herds_view.html",
+                {"form": form, "herd": herd, "herd_pub_id": herd_pub_id},
+            )
+    return render(
+        request,
+        "portal/herds/herds_view.html",
+        {"form": form, "herd": herd, "herd_pub_id": herd_pub_id},
+    )
 
 
 #
@@ -294,7 +321,15 @@ def herds_detail_view(request, herd_pub_id):
 
 @login_required
 def animals_list_view(request, herd_pub_id):
-    return render(request, "portal/animals/animals_list.html")
+    herd = get_object_or_404(
+        AnimalGroup, farm__users=request.user, public_id=herd_pub_id
+    )
+    animals = Animal.objects.filter(group=herd)
+    return render(
+        request,
+        "portal/animals/animals_list.html",
+        {"herd_pub_id": herd_pub_id, "animals": animals},
+    )
 
 
 @login_required
@@ -333,4 +368,25 @@ def animals_create_view(request, herd_pub_id):
 @login_required
 def animals_detail_view(request, animal_pub_id):
     animal = get_object_or_404(Animal, public_id=animal_pub_id)
-    return render(request, "portal/animals/animals_view.html", {"animal": animal})
+    form = AnimalForm(instance=animal)
+    if request.method == "POST":
+        form = AnimalForm(request.POST, request.FILES, instance=animal)
+        if form.is_valid():
+            form.save()
+            return redirect(
+                reverse(
+                    "portal:animals_detail_view",
+                    kwargs={"animal_pub_id": animal.public_id},
+                )
+            )
+        else:
+            return render(
+                request,
+                "portal/animals/animals_view.html",
+                {"form": form, "animal": animal},
+            )
+    return render(
+        request,
+        "portal/animals/animals_view.html",
+        {"form": form, "animal": animal},
+    )

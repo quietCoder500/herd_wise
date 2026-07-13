@@ -1,0 +1,27 @@
+{% extends 'portal/layout.html' %}
+
+{% block title %}
+HW - View Herds
+{% endblock title %}
+
+{% block content %}
+<div>
+    <h2 class="text-3xl text-primary">View Herds</h2>
+    <a href="{% url 'portal:herds_create_view' farm_pub_id=farm_pub_id %}" class="btn btn-primary">
+        Add Herd
+    </a>
+    <ul class="list">
+        {% for herd in herds %}
+        <li class="list-row flex items-center justify-between">
+            {{ herd.name }}
+            <a href="{% url 'portal:animals_list_view' herd_pub_id=herd.public_id %}" class="btn btn-secondary">
+                View Animals
+            </a>
+            <a href="{% url 'portal:herds_detail_view' herd_pub_id=herd.public_id %}" class="btn btn-primary">
+                View Details
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock content %}
