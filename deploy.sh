@@ -4,7 +4,8 @@ echo "Pulling latest code from Git..."
 git pull origin master
 
 echo "Rebuilding and starting containers (uv handling dependencies)..."
-docker compose up -d --build
+docker compose build --no-cache web
+docker compose up -d
 
 echo "Building Tailwind assets inside the web container..."
 docker compose exec -e ENV_NAME=Production web sh -lc "cd /app/theme/static_src && npm ci --no-audit --no-fund && npm run build"
