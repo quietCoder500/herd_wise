@@ -18,7 +18,7 @@ HW - View Animals
 
     <ul class="list">
         {% for animal in animals %}
-        <li class="list-row flex items-center justify-between gap-3">
+        <li class="list-row flex flex-col md:flex-row items-center justify-between gap-3">
             <span>{{ animal.formatted_name }}</span>
             <div class="flex gap-2">
                 <div class="tooltip" data-tip="Write the animal's tag ID to an NFC tag.">
@@ -47,6 +47,8 @@ HW - View Animals
                 const ndef = new NDEFReader();
                 await ndef.write(tag_id);
                 buttonElement.innerText = "Tag written";
+                buttonElement.classList.remove("btn-primary");
+                buttonElement.classList.add("btn-success");
             }
             catch (error) {
                 alert("Error writing tag: " + error);
