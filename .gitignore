@@ -218,3 +218,5 @@ __marimo__/
 # Project Specific files
 media/
 staticfiles/
+cert.crt
+cert.key

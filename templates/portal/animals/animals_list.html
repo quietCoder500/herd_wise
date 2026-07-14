@@ -5,20 +5,55 @@ HW - View Animals
 {% endblock title %}
 
 {% block content %}
-<div>
-    <h2 class="text-3xl text-primary">View Animals</h2>
-    <a href="{% url 'portal:animals_create_view' herd_pub_id=herd_pub_id %}" class="btn btn-primary">
-        Add Animal
-    </a>
+<div class="space-y-4">
+    <div class="flex items-center justify-between">
+        <h2 class="text-3xl text-primary">View Animals</h2>
+        <a href="{% url 'portal:animals_create_view' herd_pub_id=herd_pub_id %}" class="btn btn-primary">
+            Add Animal
+        </a>
+    </div>
+
     <ul class="list">
         {% for animal in animals %}
-        <li class="list-row flex items-center justify-between">
-            {{ animal.name }}
-            <a href="{% url 'portal:animals_detail_view' animal_pub_id=animal.public_id %}" class="btn btn-primary">
-                View Details
-            </a>
+        <li class="list-row flex items-center justify-between gap-3">
+            <span>{{ animal.name }}</span>
+            <div class="flex gap-2">
+                <div class="tooltip" data-tip="Write the animal's tag ID to an NFC tag.">
+                    <button onclick="write_tag(this, '{{ animal.tag_id }}')" class="btn btn-primary">Write Tag</button>
+                </div>
+                <a href="{% url 'portal:animals_detail_view' animal_pub_id=animal.public_id %}" class="btn btn-primary">
+                    View Details
+                </a>
+            </div>
         </li>
         {% endfor %}
     </ul>
+    <script>
+        async function write_tag(buttonElement, tag_id) {
+            // 1. Check if the browser even knows what NDEFReader is
+            if (!('NDEFReader' in window)) {
+                buttonElement.disabled = true;
+                alert("NFC is not supported in this browser. Please use a compatible browser (like Chrome or Edge) on an Android device or a desktop with NFC support.");
+                return;
+            }
+            buttonElement.disabled = true;
+            const originalText = buttonElement.innerText;
+            buttonElement.innerText = "Writing...";
+            try {
+                const ndef = new NDEFReader();
+                await ndef.write(tag_id);
+                buttonElement.innerText = "Tag written";
+            }
+            catch (error) {
+                alert("Error writing tag: " + error);
+            }
+            finally {
+                buttonElement.disabled = false;
+                setTimeout(() => {
+                    buttonElement.innerText = originalText;
+                }, 3000);
+            }
+        }
+    </script>
 </div>
 {% endblock content %}

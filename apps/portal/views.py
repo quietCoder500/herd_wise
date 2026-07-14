@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.http import HttpResponseNotFound
+from django.http import HttpResponseNotFound, JsonResponse
 from django.urls import reverse
 from django.views import View
 from django.shortcuts import get_list_or_404, get_object_or_404, redirect, render
@@ -390,3 +390,19 @@ def animals_detail_view(request, animal_pub_id):
         "portal/animals/animals_view.html",
         {"form": form, "animal": animal},
     )
+
+
+#
+# NFC Read and Write
+#
+
+
+@login_required
+def tags_read_view(request):
+    return render(request, "portal/nfc/nfc_read.html")
+
+
+@login_required
+def tags_write_view(request, animal_pub_id):
+    animal = get_object_or_404(Animal, public_id=animal_pub_id)
+    return render(request, "portal/nfc/tag_write_modal.html", {"tag_id": animal.tag_id})

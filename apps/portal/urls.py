@@ -35,4 +35,8 @@ urlpatterns = [
         views.animals_detail_view,
         name="animals_detail_view",
     ),
+    path("tags/read", views.tags_read_view, name="tags_read_view"),
+    path(
+        "tags/write/<str:animal_pub_id>", views.tags_write_view, name="tags_write_view"
+    ),
 ]

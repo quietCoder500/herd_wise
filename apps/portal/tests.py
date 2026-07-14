@@ -60,3 +60,21 @@ class SearchViewTests(TestCase):
                 kwargs={"animal_pub_id": animal.public_id},
             ),
         )
+
+
+class TagWriteModalViewTests(TestCase):
+    def test_alpine_request_returns_modal_fragment(self):
+        user = get_user_model().objects.create_user(
+            username="tagger", password="secret"
+        )
+        self.client.force_login(user)
+
+        response = self.client.get(
+            reverse("portal:tags_write_view"),
+            HTTP_X_ALPINE_REQUEST="true",
+            HTTP_X_ALPINE_TARGET="modal",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Write NFC Tag")
+        self.assertContains(response, "Write Tag")
