@@ -266,19 +266,6 @@ wheels = [
 ]
 
 [[package]]
-name = "django-permissions-policy"
-version = "4.32.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "asgiref" },
-    { name = "django" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/49/e0/2ab7350e222fcad1713fd7f40b89e7ed8b9d38a79559ff30a0eac1c2775d/django_permissions_policy-4.32.0.tar.gz", hash = "sha256:a43a465990b36f130f0b61719cdeb1fcedb1b51789ce7c3893179fc53f7e4a4a", size = 14912, upload-time = "2026-06-26T19:53:48.716Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/c9/76/8fbdc6b5af9b37e97b785730b8907db50b39054d38d867e2bf1a02071183/django_permissions_policy-4.32.0-py3-none-any.whl", hash = "sha256:8debc44843e096ffaff60a6c8553b2b4163f9a613d3993148002c673ed28e6d3", size = 8641, upload-time = "2026-06-26T19:53:47.615Z" },
-]
-
-[[package]]
 name = "django-polymorphic"
 version = "4.11.2"
 source = { registry = "https://pypi.org/simple" }
@@ -330,7 +317,6 @@ dependencies = [
     { name = "django" },
     { name = "django-allauth", extra = ["socialaccount"] },
     { name = "django-extensions" },
-    { name = "django-permissions-policy" },
     { name = "django-polymorphic" },
     { name = "django-tailwind", extra = ["reload"] },
     { name = "gunicorn" },
@@ -355,7 +341,6 @@ requires-dist = [
     { name = "django", specifier = ">=6.0.4" },
     { name = "django-allauth", extras = ["socialaccount"], specifier = ">=65.16.1" },
     { name = "django-extensions", specifier = ">=4.1" },
-    { name = "django-permissions-policy", specifier = ">=4.32.0" },
     { name = "django-polymorphic", specifier = ">=4.11.2" },
     { name = "django-tailwind", extras = ["reload"], specifier = ">=4.4.2" },
     { name = "gunicorn", specifier = ">=26.0.0" },
