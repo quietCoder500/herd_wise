@@ -31,6 +31,11 @@ urlpatterns = [
         name="animals_create_view",
     ),
     path(
+        "herds/<str:herd_pub_id>/animals/mass_create",
+        views.mass_create_animals_view,
+        name="animals_mass_create_view",
+    ),
+    path(
         "animals/<str:animal_pub_id>",
         views.animals_detail_view,
         name="animals_detail_view",

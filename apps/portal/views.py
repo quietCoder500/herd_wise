@@ -11,6 +11,7 @@ from django.utils.text import slugify
 from apps.portal.forms import (
     DynamicRecordForm,
     HerdForm,
+    MassAnimalForm,
     SchemaFieldFormSet,
     FarmForm,
     AnimalForm,
@@ -406,3 +407,40 @@ def tags_read_view(request):
 def tags_write_view(request, animal_pub_id):
     animal = get_object_or_404(Animal, public_id=animal_pub_id)
     return render(request, "portal/nfc/tag_write_modal.html", {"tag_id": animal.tag_id})
+
+
+#
+# Utility Views
+#
+
+
+@login_required
+def mass_create_animals_view(request, herd_pub_id):
+    herd = get_object_or_404(
+        AnimalGroup, farm__users=request.user, public_id=herd_pub_id
+    )
+    if request.method == "POST":
+        form = MassAnimalForm(request.POST)
+        if form.is_valid():
+            for _ in range(form.cleaned_data["number_of_animals"]):
+                new_animal = Animal(
+                    group=herd,
+                    farm=herd.farm,
+                    date_of_birth=form.cleaned_data["date_of_birth"],
+                    category=form.cleaned_data["category"],
+                    breed=form.cleaned_data["breed"],
+                    sex=form.cleaned_data["sex"],
+                )
+                new_animal.save()
+            return JsonResponse(
+                {"success": True, "animal_pub_id": new_animal.public_id}
+            )
+        else:
+            return JsonResponse({"success": False, "errors": form.errors})
+    else:
+        form = MassAnimalForm()
+        return render(
+            request,
+            "portal/animals/animals_create_mass.html",
+            {"form": form, "herd_pub_id": herd_pub_id},
+        )

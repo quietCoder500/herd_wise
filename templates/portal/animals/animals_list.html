@@ -11,12 +11,15 @@ HW - View Animals
         <a href="{% url 'portal:animals_create_view' herd_pub_id=herd_pub_id %}" class="btn btn-primary">
             Add Animal
         </a>
+        <a href="{% url 'portal:animals_mass_create_view' herd_pub_id=herd_pub_id %}" class="btn btn-primary">
+            Add Multiple Animals
+        </a>
     </div>
 
     <ul class="list">
         {% for animal in animals %}
         <li class="list-row flex items-center justify-between gap-3">
-            <span>{{ animal.name }}</span>
+            <span>{{ animal.formatted_name }}</span>
             <div class="flex gap-2">
                 <div class="tooltip" data-tip="Write the animal's tag ID to an NFC tag.">
                     <button onclick="write_tag(this, '{{ animal.tag_id }}')" class="btn btn-primary">Write Tag</button>
@@ -30,6 +33,7 @@ HW - View Animals
     </ul>
     <script>
         async function write_tag(buttonElement, tag_id) {
+            // TODO: Add an abort handler to cancel the write operation if the user navigates away or clicks a cancel button. https://developer.chrome.com/docs/capabilities/nfc#abort_nfc_operations
             // 1. Check if the browser even knows what NDEFReader is
             if (!('NDEFReader' in window)) {
                 buttonElement.disabled = true;

@@ -125,3 +125,28 @@ class AnimalForm(forms.ModelForm):
     class Meta:
         model = Animal
         fields = ["name", "date_of_birth", "category", "breed", "sex"]
+
+
+class MassAnimalForm(forms.Form):
+    number_of_animals = forms.IntegerField(
+        min_value=1,
+        widget=forms.NumberInput(
+            attrs={"class": "input", "placeholder": "Number of animals"}
+        ),
+    )
+    date_of_birth = forms.DateField(
+        required=False, widget=forms.DateInput(attrs={"type": "date", "class": "input"})
+    )
+    category = forms.ChoiceField(
+        choices=Animal.ANIMAL_CATEGORY_CHOICES,
+        initial="Cattle",
+        widget=forms.Select(attrs={"class": "select"}),
+    )
+    breed = forms.CharField(
+        widget=forms.TextInput(attrs={"class": "input", "placeholder": "Breed"})
+    )
+    sex = forms.ChoiceField(
+        choices=Animal.SEX_CHOICES,
+        initial="U",
+        widget=forms.Select(attrs={"class": "select"}),
+    )
