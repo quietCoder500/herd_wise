@@ -1,0 +1,28 @@
+# Version control
+.git
+.gitignore
+
+# Python virtual environments and caches
+.venv
+venv
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local environment and secrets
+.env
+.env.*
+
+# OS/editor files
+.DS_Store
+.vscode/
+.idea/
+
+# Build artifacts
+staticfiles/
+mediafiles/
+*.log

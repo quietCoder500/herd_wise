@@ -22,9 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
-# -------------------------------------------------------------------------
-# OPTION A: If you use pyproject.toml and uv.lock (Recommended)
-# -------------------------------------------------------------------------
+# Install project dependencies into the container environment.
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
@@ -41,8 +39,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 # Copy the rest of your application code into the container
 COPY . /app/
 
-# Place the uv-created virtual environment at the front of the PATH
-# (Not needed if you used Option B with --system)
+# Ensure the container uses the virtual environment created by uv.
 ENV PATH="/app/.venv/bin:$PATH"
 
 # Build Tailwind CSS directly with the local npm pipeline for a faster compile.
