@@ -1,8 +1,85 @@
 {% extends 'portal/layout.html' %}
 
 {% block content %}
-<div class="flex flex-col gap-4">
-    <a href="{% url 'portal:search_view' %}" class="text-6xl text-secondary">Search</a>
-    <a href="/portal/farms" class="text-6xl text-secondary">Farms</a>
+<div class="space-y-6">
+    <div class="hero rounded-box bg-base-200 p-6 shadow-sm">
+        <div class="hero-content flex-col lg:flex-row lg:items-start lg:justify-between">
+            <div class="max-w-2xl">
+                <div class="badge badge-secondary badge-outline mb-3">Portal overview</div>
+                <h1 class="text-4xl font-bold">Keep the herd operation moving</h1>
+                <p class="py-4 text-base-content/70">
+                    Here’s a live snapshot of the farms, animals, and records you can access right now.
+                </p>
+                <div class="flex flex-wrap gap-3">
+                    <a href="{% url 'portal:search_view' %}" class="btn btn-primary">Search records</a>
+                    <a href="{% url 'portal:farms_list_view' %}" class="btn btn-outline btn-secondary">Open farms</a>
+                </div>
+            </div>
+
+            <div class="stats stats-vertical shadow sm:stats-horizontal">
+                <div class="stat">
+                    <div class="stat-title">Farms</div>
+                    <div class="stat-value">{{ farm_count }}</div>
+                    <div class="stat-desc">Active locations</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-title">Animals</div>
+                    <div class="stat-value">{{ animal_count }}</div>
+                    <div class="stat-desc">Tracked in your farms</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-title">Records</div>
+                    <div class="stat-value">{{ record_count }}</div>
+                    <div class="stat-desc">Stored in the portal</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid gap-4 lg:grid-cols-3">
+        <div class="card bg-base-100 shadow">
+            <div class="card-body">
+                <h2 class="card-title">Your farms</h2>
+                {% if farms %}
+                    <ul class="menu rounded-box bg-base-200 p-2">
+                        {% for farm in farms %}
+                            <li><a href="{% url 'portal:farms_detail_view' farm_pub_id=farm.public_id %}">{{ farm.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-sm text-base-content/70">No farms yet. Create one to start tracking activity.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card bg-base-100 shadow">
+            <div class="card-body">
+                <h2 class="card-title">Recent records</h2>
+                {% if recent_records %}
+                    <div class="space-y-3 text-sm">
+                        {% for record in recent_records %}
+                            <div class="rounded-lg bg-base-200 p-3">
+                                <p class="font-semibold">{{ record.template.name }}</p>
+                                <p class="text-base-content/70">{{ record.report_link }} • {{ record.created_at|date:"M d, Y" }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-sm text-base-content/70">No records yet. Add one from a farm detail view to populate this feed.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card bg-base-100 shadow">
+            <div class="card-body">
+                <h2 class="card-title">Quick access</h2>
+                <div class="flex flex-col gap-2">
+                    <a href="{% url 'portal:search_view' %}" class="btn btn-sm btn-outline">Search</a>
+                    <a href="{% url 'portal:farms_list_view' %}" class="btn btn-sm btn-outline">Farm list</a>
+                    <a href="{% url 'portal:search_view' %}?search=" class="btn btn-sm btn-ghost">Find animals</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock content %}

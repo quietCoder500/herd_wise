@@ -1,63 +1,84 @@
 {% extends 'portal/layout.html' %}
 
 {% block content %}
-<div>
-    <div>
-        <form action="{% url 'portal:search_view' %}" method="get" x-target="search_results">
-            <div class="flex flex-row">
-                <input name="search" placeholder="Search for a farm, herd, animal, or record..."
-                    @input.debounce="$el.form.requestSubmit()">
-                <button type="submit">
-                    <i class="fa-solid fa-magnifying-glass"></i>
+<div class="mx-auto flex max-w-3xl flex-col gap-4 px-2 py-4 sm:px-0">
+    <div class="card border border-base-300 bg-base-100 shadow-sm">
+        <div class="card-body gap-4 p-4 sm:p-6">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h1 class="text-xl font-semibold">Search</h1>
+                    <p class="text-sm opacity-70">Find farms, herds, animals, and records in one place.</p>
+                </div>
+                <button class="btn btn-outline btn-sm" onclick="mobile_filters_dialog.showModal()">
+                    <i class="fa-solid fa-sliders"></i>
+                    Filter
                 </button>
             </div>
-        </form>
-    </div>
-    <div>
-        <button class="btn" onclick="mobile_filters_dialog.showModal()">Filter</button>
 
-        <dialog id="mobile_filters_dialog" class="modal">
-            <div class="modal-box">
-                <h3>Filters</h3>
-                <div class="join join-vertical bg-base-100">
-                    <div class="collapse collapse-arrow join-item border-base-300 border">
-                        <input type="radio" name="filter-accordion-mobile" checked="checked" />
-                        <div class="collapse-title font-semibold">Farms</div>
-                        <div class="collapse-content text-sm"></div>
-                    </div>
-                    <div class="collapse collapse-arrow join-item border-base-300 border">
-                        <input type="radio" name="filter-accordion-mobile" />
-                        <div class="collapse-title font-semibold">Herds</div>
-                        <div class="collapse-content text-sm"></div>
-                    </div>
-                    <div class="collapse collapse-arrow join-item border-base-300 border">
-                        <input type="radio" name="filter-accordion-mobile" />
-                        <div class="collapse-title font-semibold">Record Types</div>
-                        <div class="collapse-content text-sm"></div>
-                    </div>
+            <form action="{% url 'portal:search_view' %}" method="get" x-target="search_results"
+                class="flex flex-col gap-3 sm:flex-row">
+                <label class="input input-bordered flex-1 items-center gap-2">
+                    <i class="fa-solid fa-magnifying-glass opacity-70"></i>
+                    <input name="search" class="grow" placeholder="Search for a farm, herd, animal, or record..."
+                        @input.debounce="$el.form.requestSubmit()">
+                </label>
+                <button type="submit" class="btn btn-primary">
+                    Search
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <dialog id="mobile_filters_dialog" class="modal">
+        <div class="modal-box">
+            <h3 class="text-lg font-semibold">Filters</h3>
+            <div class="mt-4 join join-vertical bg-base-100">
+                <div class="collapse collapse-arrow join-item border border-base-300">
+                    <input type="radio" name="filter-accordion-mobile" checked="checked" />
+                    <div class="collapse-title font-semibold">Farms</div>
+                    <div class="collapse-content text-sm"></div>
+                </div>
+                <div class="collapse collapse-arrow join-item border border-base-300">
+                    <input type="radio" name="filter-accordion-mobile" />
+                    <div class="collapse-title font-semibold">Herds</div>
+                    <div class="collapse-content text-sm"></div>
+                </div>
+                <div class="collapse collapse-arrow join-item border border-base-300">
+                    <input type="radio" name="filter-accordion-mobile" />
+                    <div class="collapse-title font-semibold">Record Types</div>
+                    <div class="collapse-content text-sm"></div>
                 </div>
             </div>
-            <form method="dialog" class="modal-backdrop">
-                <button>close</button>
-            </form>
-        </dialog>
-    </div>
-    <div class="flex flex-col">
-        {% partialdef search_results inline %}
-        <h2>
-            Results
-        </h2>
-        <ul id="search_results">
-            {% for result in results %}
-            <li class="flex flex-row grow justify-between">
-                <a href="{{ result.url }}">{{ result.label }} <span class="text-sm opacity-70">
-                        ({{ result.kind }})</span></a>
-            </li>
-            {% empty %}
-            <li>No results found.</li>
-            {% endfor %}
-        </ul>
-        {% endpartialdef %}
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+
+    <div class="card border border-base-300 bg-base-100 shadow-sm">
+        <div class="card-body p-4 sm:p-6">
+            {% partialdef search_results inline %}
+            <div class="mb-4 flex items-center justify-between">
+                <h2 class="text-lg font-semibold">Results</h2>
+                <span class="badge badge-ghost">{{ results|length }} found</span>
+            </div>
+            <ul id="search_results" class="space-y-2">
+                {% for result in results %}
+                <li
+                    class="flex flex-row items-center justify-between rounded-lg border border-base-200 px-3 py-2 transition hover:bg-base-200/60">
+                    <a href="{{ result.url }}" class="flex-1 text-sm font-medium">
+                        {{ result.label }}
+                        <span class="ml-2 text-sm opacity-70">({{ result.kind }})</span>
+                    </a>
+                </li>
+                {% empty %}
+                <li class="rounded-lg border border-dashed border-base-300 px-4 py-6 text-center text-sm opacity-70">
+                    No results found.
+                </li>
+                {% endfor %}
+            </ul>
+            {% endpartialdef %}
+        </div>
     </div>
 </div>
 {% endblock content %}

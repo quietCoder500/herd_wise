@@ -165,7 +165,7 @@ class Animal(ReportableModel):
         return self.formatted_name
 
     def save(self, *args, **kwargs) -> None:
-        if not self.public_id and getattr(self, "group_id", None):
+        if getattr(self, "group", None) is not None:
             self.farm = self.group.farm
 
         # Below runs on first save

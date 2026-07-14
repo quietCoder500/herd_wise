@@ -2,7 +2,13 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
-from apps.portal.models import Animal, AnimalGroup, Farm
+from apps.portal.models import (
+    Animal,
+    AnimalGroup,
+    Farm,
+    LivestockRecord,
+    RecordTemplate,
+)
 
 
 class FarmCreateViewTests(TestCase):
@@ -60,6 +66,45 @@ class SearchViewTests(TestCase):
                 kwargs={"animal_pub_id": animal.public_id},
             ),
         )
+
+
+class DashboardViewTests(TestCase):
+    def test_dashboard_shows_real_counts_and_recent_activity(self):
+        user = get_user_model().objects.create_user(
+            username="dashboard_user", password="secret"
+        )
+        self.client.force_login(user)
+
+        farm = Farm.objects.create(name="Demo Farm", location="Here")
+        farm.users.add(user)
+
+        herd = AnimalGroup.objects.create(name="Demo Herd", farm=farm)
+        animal = Animal.objects.create(group=herd, category="MC", breed="Barred Rock")
+        template = RecordTemplate.objects.create(
+            farm=farm,
+            name="Health Check",
+            slug="health-check",
+            schema=[
+                {
+                    "name": "note",
+                    "label": "Note",
+                    "field_type": "text",
+                    "required": True,
+                }
+            ],
+        )
+        LivestockRecord.objects.create(
+            report_link=animal,
+            template=template,
+            data={"note": "Checked in"},
+        )
+
+        response = self.client.get(reverse("portal:index_view"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "1")
+        self.assertContains(response, "Demo Farm")
+        self.assertContains(response, "Health Check")
 
 
 class TagWriteModalViewTests(TestCase):
