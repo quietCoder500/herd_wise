@@ -1,0 +1,28 @@
+{% if messages %}
+<div class="mx-4 mt-4 flex flex-col gap-2">
+    {% for message in messages %}
+    <div class="alert shadow-sm {% if message.level_tag == 'error' %}alert-error{% elif message.level_tag == 'success' %}alert-success{% elif message.level_tag == 'warning' %}alert-warning{% else %}alert-info{% endif %}"
+        role="alert" data-message-alert>
+        <span class="font-medium">{{ message }}</span>
+        <button type="button" class="btn btn-sm btn-ghost btn-circle" aria-label="Close message" data-close-message>
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+    {% endfor %}
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const dismissAlert = (alert) => {
+            alert.remove();
+        };
+
+        document.querySelectorAll('[data-message-alert]').forEach((alert, index) => {
+            alert.querySelector('[data-close-message]')?.addEventListener('click', () => dismissAlert(alert));
+
+            setTimeout(() => {
+                dismissAlert(alert);
+            }, 4000 + index * 150);
+        });
+    });
+</script>
+{% endif %}

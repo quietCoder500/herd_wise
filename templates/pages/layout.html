@@ -14,5 +14,8 @@
         {% include "_components/_theme_selector.html" %}
     </div>
 </nav>
+{% block messages %}
+{% include "_components/_message_banner.html" %}
+{% endblock messages %}
 {% block content %}{% endblock content %}
 {% endblock body %}

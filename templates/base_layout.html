@@ -16,8 +16,13 @@
 </head>
 
 <body class="bg-base-100 text-base-content font-inter leading-normal tracking-normal">
-    {% block body %} Go away, you should probably not be seeing this
-    right now... {% endblock body %}
+    {% block body %}
+    {% block messages %}
+    {% include '_components/_message_banner.html' %}
+    {% endblock messages %}
+    {% block content %} Go away, you should probably not be seeing this
+    right now... {% endblock content %}
+    {% endblock body %}
 </body>
 
 </html>

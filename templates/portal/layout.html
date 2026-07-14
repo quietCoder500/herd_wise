@@ -1,7 +1,10 @@
 {% extends 'base_layout.html' %}
 
 {% block body %}
-    {% block content %}
-    You really should not be seeing this. If you are, someone goofed.
-    {% endblock content %}
+{% block messages %}
+{% include '_components/_message_banner.html' %}
+{% endblock messages %}
+{% block content %}
+You really should not be seeing this. If you are, someone goofed.
+{% endblock content %}
 {% endblock body %}

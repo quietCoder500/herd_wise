@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
@@ -229,6 +230,7 @@ def farms_create_view(request):
                 new_farm = form.save()
                 new_farm.users.add(request.user)
                 new_farm.save()
+            messages.success(request, f"Successfully created farm {new_farm.name}.")
             return redirect(
                 reverse(
                     "portal:farms_detail_view",
@@ -269,6 +271,7 @@ def herds_create_view(request, farm_pub_id):
             new_herd = form.save(commit=False)
             new_herd.farm = farm
             new_herd.save()
+            messages.success(request, f"Successfully created herd {new_herd.name}.")
             return redirect(
                 reverse(
                     "portal:herds_detail_view",
@@ -296,6 +299,7 @@ def herds_detail_view(request, herd_pub_id):
         form = HerdForm(request.POST, instance=herd)
         if form.is_valid():
             form.save()
+            messages.success(request, f"Successfully updated herd {herd.name}.")
             return redirect(
                 reverse(
                     "portal:herds_detail_view",
@@ -422,21 +426,43 @@ def mass_create_animals_view(request, herd_pub_id):
     if request.method == "POST":
         form = MassAnimalForm(request.POST)
         if form.is_valid():
-            for _ in range(form.cleaned_data["number_of_animals"]):
-                new_animal = Animal(
-                    group=herd,
-                    farm=herd.farm,
-                    date_of_birth=form.cleaned_data["date_of_birth"],
-                    category=form.cleaned_data["category"],
-                    breed=form.cleaned_data["breed"],
-                    sex=form.cleaned_data["sex"],
+            try:
+                with transaction.atomic():
+                    for _ in range(form.cleaned_data["number_of_animals"]):
+                        new_animal = Animal(
+                            group=herd,
+                            farm=herd.farm,
+                            date_of_birth=form.cleaned_data["date_of_birth"],
+                            category=form.cleaned_data["category"],
+                            breed=form.cleaned_data["breed"],
+                            sex=form.cleaned_data["sex"],
+                        )
+                        new_animal.save()
+                    messages.success(
+                        request,
+                        f"Successfully created {form.cleaned_data['number_of_animals']} animals in herd {herd.name}.",
+                    )
+                    return render(
+                        request,
+                        "portal/animals/animals_create_mass.html",
+                        {"form": MassAnimalForm(), "herd_pub_id": herd_pub_id},
+                    )
+            except Exception as e:
+                messages.error(
+                    request,
+                    f"An error occurred while creating animals: {str(e)}",
                 )
-                new_animal.save()
-            return JsonResponse(
-                {"success": True, "animal_pub_id": new_animal.public_id}
-            )
+                return render(
+                    request,
+                    "portal/animals/animals_create_mass.html",
+                    {"form": form, "herd_pub_id": herd_pub_id},
+                )
         else:
-            return JsonResponse({"success": False, "errors": form.errors})
+            return render(
+                request,
+                "portal/animals/animals_create_mass.html",
+                {"form": form, "herd_pub_id": herd_pub_id},
+            )
     else:
         form = MassAnimalForm()
         return render(
