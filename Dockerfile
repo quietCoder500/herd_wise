@@ -1,5 +1,5 @@
 # Use an official lightweight Python image
-FROM python:3.14.6-slim
+FROM python:3.14-slim
 
 # Copy the uv binaries from the official Astral image
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
@@ -10,10 +10,9 @@ ENV PYTHONUNBUFFERED=1
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Install system dependencies (required for some Python packages like psycopg2)
+# 1. Install system dependencies (Node.js & build tools)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
@@ -22,32 +21,31 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
-# Install project dependencies into the container environment.
+# 2. Install Python dependencies (Cached by uv)
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --frozen --no-install-project --no-dev
 
-# -------------------------------------------------------------------------
-# OPTION B: If you are still using a standard requirements.txt with uv
-# (Uncomment the two lines below and comment out Option A if using this)
-# -------------------------------------------------------------------------
-# COPY requirements.txt /app/
-# RUN --mount=type=cache,target=/root/.cache/uv uv pip install --system -r requirements.txt
-# -------------------------------------------------------------------------
+# 3. Copy ONLY Node dependency files first
+COPY theme/static_src/package*.json /app/theme/static_src/
 
-# Copy the rest of your application code into the container
+# 4. Install Node dependencies using an npm cache mount (Blazing fast!)
+WORKDIR /app/theme/static_src
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --no-audit --no-fund
+
+# 5. Copy the rest of your application code
+WORKDIR /app
 COPY . /app/
 
 # Ensure the container uses the virtual environment created by uv.
 ENV PATH="/app/.venv/bin:$PATH"
 
-# Build Tailwind CSS directly with the local npm pipeline for a faster compile.
+# 6. Build Tailwind CSS (Only takes a second because node_modules is already built)
 WORKDIR /app/theme/static_src
-RUN npm ci --no-audit --no-fund
 RUN npm run build
 
 WORKDIR /app
 
-# Expose Gunicorn's port
 EXPOSE 8000

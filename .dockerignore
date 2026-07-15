@@ -3,6 +3,7 @@
 .gitignore
 
 # Python virtual environments and caches
+node_modules/
 .venv
 venv
 __pycache__/
