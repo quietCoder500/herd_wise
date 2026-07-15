@@ -25,7 +25,7 @@ CSRF_COOKIE_SECURE = True
 
 csrf_origins = os.getenv(
     "CSRF_TRUSTED_ORIGINS",
-    "https://localhost,https://127.0.0.1,https://192.168.1.101,https://192.168.0.101",
+    "https://localhost,https://127.0.0.1,https://192.168.1.101:8443,https://192.168.0.101:8443",
 )
 CSRF_TRUSTED_ORIGINS = [
     origin.strip() for origin in csrf_origins.split(",") if origin.strip()
