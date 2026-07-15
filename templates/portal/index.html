@@ -12,6 +12,7 @@
                 </p>
                 <div class="flex flex-wrap gap-3">
                     <a href="{% url 'portal:search_view' %}" class="btn btn-primary">Search records</a>
+                    <a href="{% url 'portal:tags_read_view' %}" class="btn btn-secondary">Read NFC tag</a>
                     <a href="{% url 'portal:farms_list_view' %}" class="btn btn-outline btn-secondary">Open farms</a>
                 </div>
             </div>
@@ -41,13 +42,14 @@
             <div class="card-body">
                 <h2 class="card-title">Your farms</h2>
                 {% if farms %}
-                    <ul class="menu rounded-box bg-base-200 p-2">
-                        {% for farm in farms %}
-                            <li><a href="{% url 'portal:farms_detail_view' farm_pub_id=farm.public_id %}">{{ farm.name }}</a></li>
-                        {% endfor %}
-                    </ul>
+                <ul class="menu rounded-box bg-base-200 p-2">
+                    {% for farm in farms %}
+                    <li><a href="{% url 'portal:farms_detail_view' farm_pub_id=farm.public_id %}">{{ farm.name }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
                 {% else %}
-                    <p class="text-sm text-base-content/70">No farms yet. Create one to start tracking activity.</p>
+                <p class="text-sm text-base-content/70">No farms yet. Create one to start tracking activity.</p>
                 {% endif %}
             </div>
         </div>
@@ -56,16 +58,18 @@
             <div class="card-body">
                 <h2 class="card-title">Recent records</h2>
                 {% if recent_records %}
-                    <div class="space-y-3 text-sm">
-                        {% for record in recent_records %}
-                            <div class="rounded-lg bg-base-200 p-3">
-                                <p class="font-semibold">{{ record.template.name }}</p>
-                                <p class="text-base-content/70">{{ record.report_link }} • {{ record.created_at|date:"M d, Y" }}</p>
-                            </div>
-                        {% endfor %}
+                <div class="space-y-3 text-sm">
+                    {% for record in recent_records %}
+                    <div class="rounded-lg bg-base-200 p-3">
+                        <p class="font-semibold">{{ record.template.name }}</p>
+                        <p class="text-base-content/70">{{ record.report_link }} • {{ record.created_at|date:"M d, Y" }}
+                        </p>
                     </div>
+                    {% endfor %}
+                </div>
                 {% else %}
-                    <p class="text-sm text-base-content/70">No records yet. Add one from a farm detail view to populate this feed.</p>
+                <p class="text-sm text-base-content/70">No records yet. Add one from a farm detail view to populate this
+                    feed.</p>
                 {% endif %}
             </div>
         </div>

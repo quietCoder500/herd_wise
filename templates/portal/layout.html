@@ -1,6 +1,13 @@
 {% extends 'base_layout.html' %}
 
 {% block body %}
+<nav>
+    <div class="navbar bg-base-100 shadow-sm">
+        <div class="flex-1">
+            <a href="{% url 'portal:index_view' %}" class="btn btn-ghost normal-case text-xl">Herd Portal</a>
+        </div>
+    </div>
+</nav>
 {% block messages %}
 {% include '_components/_message_banner.html' %}
 {% endblock messages %}

@@ -1,0 +1,73 @@
+{% extends 'portal/layout.html' %}
+
+{% block content %}
+<div class="max-w-2xl space-y-6">
+    <div class="rounded-box bg-base-200 p-6 shadow-sm">
+        <h1 class="text-2xl font-semibold">Read NFC Tag</h1>
+        <p class="mt-2 text-sm opacity-70">
+            Scan an animal tag to capture its public ID, then choose a record form to continue.
+        </p>
+    </div>
+
+    <form method="post" class="rounded-box bg-base-100 p-6 shadow-sm space-y-4">
+        {% csrf_token %}
+
+        <div class="space-y-2">
+            <label for="public-id" class="label">Animal Public ID</label>
+            <div class="flex gap-3">
+                <input id="public-id" name="public_id" type="text" class="input input-bordered flex-1"
+                    placeholder="Scan NFC tag to populate this field" required>
+                <button type="button" id="read-nfc-button" class="btn btn-primary">
+                    Read NFC Tag
+                </button>
+            </div>
+        </div>
+
+        <div class="space-y-2">
+            <label for="template-slug" class="label">Record Form</label>
+            <select id="template-slug" name="template_slug" class="select select-bordered w-full" required>
+                <option value="">Select a form</option>
+                {% for template in templates %}
+                <option value="{{ template.slug }}">{{ template.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-secondary">Continue to Form</button>
+    </form>
+</div>
+
+<script>
+    const publicIdInput = document.getElementById('public-id');
+    const readButton = document.getElementById('read-nfc-button');
+
+    if (readButton) {
+        readButton.addEventListener('click', async () => {
+            if (!('NDEFReader' in window)) {
+                const manualValue = window.prompt('Enter the animal public ID manually');
+                if (manualValue) {
+                    publicIdInput.value = manualValue.trim();
+                }
+                return;
+            }
+
+            try {
+                const ndef = new window.NDEFReader();
+                await ndef.scan();
+
+                ndef.onreading = (event) => {
+                    const textRecord = event.message.records.find((record) => record.recordType === 'text');
+                    if (textRecord) {
+                        const decoder = new TextDecoder();
+                        publicIdInput.value = decoder.decode(textRecord.data).trim();
+                    }
+                    readButton.textContent = 'Tag Read';
+                };
+            } catch (error) {
+                console.error(error);
+                window.alert('Unable to read the NFC tag from this browser. Enter the public ID manually instead.');
+            }
+        });
+    }
+</script>
+{% endblock content %}

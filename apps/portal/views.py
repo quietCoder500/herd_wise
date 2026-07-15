@@ -2,12 +2,12 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.http import HttpResponseNotFound
 from django.urls import reverse
 from django.views import View
 from django.shortcuts import get_list_or_404, get_object_or_404, redirect, render
 from django.db.models import Q
 from django.utils.text import slugify
+from uuid import uuid4
 
 from apps.portal.forms import (
     DynamicRecordForm,
@@ -31,11 +31,6 @@ from utils.lib import AlpineTemplateResponse
 @login_required
 def index(request):
     return render(request, "portal/index.html")
-
-
-@login_required
-def records_list_view(request):
-    return HttpResponseNotFound("No page here yet")
 
 
 class Search(LoginRequiredMixin, View):
@@ -115,92 +110,6 @@ class Search(LoginRequiredMixin, View):
         }
 
         return AlpineTemplateResponse(request, "portal/search.html", context=context)
-
-
-class AddRecordTemplateView(LoginRequiredMixin, View):
-    def get(self, request):
-        formset = SchemaFieldFormSet()
-        return render(request, "portal/add_record_template.html", {"formset": formset})
-
-    def post(self, request):
-        formset = SchemaFieldFormSet(request.POST)
-        if formset.is_valid():
-            schema_data = []
-
-            for form in formset.ordered_forms:
-                schema_data.append(
-                    {
-                        "name": slugify(form.cleaned_data.get("label")),  # type: ignore
-                        "label": form.cleaned_data.get("label"),
-                        "field_type": form.cleaned_data.get("field_type", "text"),
-                        "required": form.cleaned_data.get("required", True),
-                    }
-                )
-            # For tomorrow me: Add another form using ModelForm for the RecordTemplate model's extra data
-            # then create a validation for the schema, then save the model to the DB. Also, copy django's default form templates and add daisy UI to them.
-
-        return render(request, "portal/add_record_template.html")
-
-
-class AddRecordView(LoginRequiredMixin, View):
-    def get(self, request, template_slug):
-        template = get_object_or_404(RecordTemplate, slug=template_slug)
-        model_options = ReportableModel.objects.filter(farm__users=request.user)
-        form = DynamicRecordForm(template=template, model_options=model_options)
-
-        return render(
-            request, "portal/add_record.html", {"form": form, "template": template}
-        )
-
-    def post(self, request, template_slug):
-        template = get_object_or_404(RecordTemplate, slug=template_slug)
-        model_options = ReportableModel.objects.filter(farm__users=request.user)
-        form = DynamicRecordForm(
-            request.POST, template=template, model_options=model_options
-        )
-        if form.is_valid():
-            LivestockRecord.objects.create(
-                report_link=form.cleaned_data.pop("report_link"),
-                template=template,
-                data=form.cleaned_data,
-            ).save()
-
-        return render(
-            request, "portal/add_record.html", {"form": form, "template": template}
-        )
-
-
-class _RecordField:
-    def __init__(
-        self, name: str, label: str, data_type: str, required: bool, value
-    ) -> None:
-        self.name = name
-        self.label = label
-        self.data_type = data_type
-        self.required = required
-        self.value = value
-
-
-class GetRecordView(LoginRequiredMixin, View):
-    def get(self, request, public_id):
-        record = get_object_or_404(
-            LivestockRecord, report_link__farm__users=request.user, public_id=public_id
-        )
-        fields = []
-        schema = record.template.schema
-        for field in schema:
-            print(field)
-            fields.append(
-                _RecordField(
-                    name=field.get("name"),
-                    label=field.get("label"),
-                    data_type=field.get("field_type"),
-                    required=field.get("required"),
-                    value=record.data.get(field.get("name")),
-                )
-            )
-        context = {"fields": fields, "template_name": record.template.name}
-        return render(request, "portal/models/record_read.html", context=context)
 
 
 #
@@ -404,13 +313,158 @@ def animals_detail_view(request, animal_pub_id):
 
 @login_required
 def tags_read_view(request):
-    return render(request, "portal/nfc/nfc_read.html")
+    templates = RecordTemplate.objects.filter(farm__users=request.user).order_by("name")
+
+    if request.method == "POST":
+        public_id = request.POST.get("public_id", "").strip()
+        template_slug = request.POST.get("template_slug", "").strip()
+
+        if not public_id:
+            messages.error(request, "Please read an NFC tag before continuing.")
+        elif not template_slug:
+            messages.error(request, "Please select a record form.")
+        else:
+            template = templates.filter(slug=template_slug).first()
+            if template is None:
+                messages.error(request, "Please select a valid record form.")
+            else:
+                return redirect(
+                    reverse(
+                        "portal:records_create_view",
+                        kwargs={"public_id": public_id, "form_slug": template.slug},
+                    )
+                )
+
+    return render(
+        request,
+        "portal/nfc/nfc_read.html",
+        {"templates": templates},
+    )
 
 
 @login_required
 def tags_write_view(request, animal_pub_id):
     animal = get_object_or_404(Animal, public_id=animal_pub_id)
     return render(request, "portal/nfc/tag_write_modal.html", {"tag_id": animal.tag_id})
+
+
+#
+# Record Views
+#
+
+
+class _RecordField:
+    def __init__(
+        self, name: str, label: str, data_type: str, required: bool, value
+    ) -> None:
+        self.name = name
+        self.label = label
+        self.data_type = data_type
+        self.required = required
+        self.value = value
+
+
+@login_required
+def all_records_list_view(request):
+    records = LivestockRecord.objects.filter(report_link__farm__users=request.user)
+    return render(request, "portal/records/records_list.html", {"records": records})
+
+
+class RecordsCreateView(LoginRequiredMixin, View):
+    def get(self, request, public_id, form_slug):
+        template = get_object_or_404(RecordTemplate, slug=form_slug)
+        model_options = ReportableModel.objects.filter(farm__users=request.user)
+        form = DynamicRecordForm(template=template, model_options=model_options)
+
+        return render(
+            request,
+            "portal/records/records_create.html",
+            {"form": form, "template": template, "public_id": public_id},
+        )
+
+    def post(self, request, public_id, form_slug):
+        template = get_object_or_404(RecordTemplate, slug=form_slug)
+        model_options = ReportableModel.objects.filter(farm__users=request.user)
+        form = DynamicRecordForm(
+            request.POST, template=template, model_options=model_options
+        )
+        if form.is_valid():
+            LivestockRecord.objects.create(
+                report_link=form.cleaned_data.pop("report_link"),
+                template=template,
+                data=form.cleaned_data,
+            ).save()
+
+        return render(
+            request,
+            "portal/records/records_create.html",
+            {"form": form, "template": template, "public_id": public_id},
+        )
+
+
+class RecordsListView(LoginRequiredMixin, View):
+    def get(self, request, public_id):
+        reportable_model = get_object_or_404(
+            ReportableModel, farm__users=request.user, public_id=public_id
+        )
+        records = LivestockRecord.objects.filter(report_link=reportable_model)
+        return render(
+            request,
+            "portal/records/records_list.html",
+            {"records": records, "reportable_model": reportable_model},
+        )
+
+
+class RecordsDetailView(LoginRequiredMixin, View):
+    def get(self, request, public_id):
+        record = get_object_or_404(
+            LivestockRecord, report_link__farm__users=request.user, public_id=public_id
+        )
+        fields = []
+        schema = record.template.schema
+        for field in schema:
+            print(field)
+            fields.append(
+                _RecordField(
+                    name=field.get("name"),
+                    label=field.get("label"),
+                    data_type=field.get("field_type"),
+                    required=field.get("required"),
+                    value=record.data.get(field.get("name")),
+                )
+            )
+        context = {"fields": fields, "template_name": record.template.name}
+        return render(request, "portal/records/records_detail.html", context=context)
+
+
+#
+# Template Views
+#
+
+
+class TemplateCreateView(LoginRequiredMixin, View):
+    def get(self, request):
+        formset = SchemaFieldFormSet()
+        return render(request, "portal/add_record_template.html", {"formset": formset})
+
+    def post(self, request):
+        formset = SchemaFieldFormSet(request.POST)
+        if formset.is_valid():
+            schema_data = []
+
+            for form in formset.ordered_forms:
+                schema_data.append(
+                    {
+                        "name": slugify(form.cleaned_data.get("label", uuid4())),  # type: ignore
+                        "label": form.cleaned_data.get("label"),
+                        "field_type": form.cleaned_data.get("field_type", "text"),
+                        "required": form.cleaned_data.get("required", True),
+                    }
+                )
+            # For tomorrow me: Add another form using ModelForm for the RecordTemplate model's extra data
+            # then create a validation for the schema, then save the model to the DB. Also, copy django's default form templates and add daisy UI to them.
+
+        return render(request, "portal/add_record_template.html")
 
 
 #

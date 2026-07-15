@@ -1,7 +1,7 @@
 {% extends 'portal/layout.html' %}
 
 {% block content %}
-<form action="{% url 'portal:add_livestock_record' template.slug %}" method="post">
+<form action="{% url 'portal:records_create_view' public_id=public_id form_slug=template.slug %}" method="post">
     {{ form }}
     {% csrf_token %}
     <button type="submit" class="btn btn-primary">Create</button>

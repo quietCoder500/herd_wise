@@ -107,6 +107,47 @@ class DashboardViewTests(TestCase):
         self.assertContains(response, "Health Check")
 
 
+class TagReadViewTests(TestCase):
+    def test_post_redirects_to_record_creation_view_with_selected_form(self):
+        user = get_user_model().objects.create_user(
+            username="tag_reader", password="secret"
+        )
+        self.client.force_login(user)
+
+        farm = Farm.objects.create(name="Tag Farm", location="Here")
+        farm.users.add(user)
+        RecordTemplate.objects.create(
+            farm=farm,
+            name="Health Check",
+            slug="health-check",
+            schema=[
+                {
+                    "name": "note",
+                    "label": "Note",
+                    "field_type": "text",
+                    "required": True,
+                }
+            ],
+        )
+
+        response = self.client.post(
+            reverse("portal:tags_read_view"),
+            {
+                "public_id": "animal-public-id",
+                "template_slug": "health-check",
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(
+            response,
+            reverse(
+                "portal:records_create_view",
+                kwargs={"public_id": "animal-public-id", "form_slug": "health-check"},
+            ),
+        )
+
+
 class TagWriteModalViewTests(TestCase):
     def test_alpine_request_returns_modal_fragment(self):
         user = get_user_model().objects.create_user(

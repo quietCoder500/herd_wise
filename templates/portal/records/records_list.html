@@ -1,0 +1,17 @@
+{% extends 'portal/layout.html' %}
+
+{% block content %}
+<h1>Records</h1>
+<ul class="list">
+    {% if records|length == 0 %}
+    <li class="list-row">No records found.</li>
+    {% endif %}
+    {% for record in records %}
+    <li class="list-row">
+        <a href="{% url 'portal:records_detail_view' public_id=record.public_id %}">
+            {{ record }}
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock content %}

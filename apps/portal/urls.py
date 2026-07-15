@@ -7,7 +7,12 @@ app_name = "portal"
 urlpatterns = [
     path("", views.index, name="index_view"),
     path("search", views.Search.as_view(), name="search_view"),
-    path("records", views.records_list_view, name="records_list_view"),
+    path("records", views.all_records_list_view, name="all_records_list_view"),
+    path(
+        "records/<str:public_id>",
+        views.RecordsDetailView.as_view(),
+        name="records_detail_view",
+    ),
     path("farms", views.farms_list_view, name="farms_list_view"),
     path("farms/create", views.farms_create_view, name="farms_create_view"),
     path("farms/<str:farm_pub_id>", views.farms_detail_view, name="farms_detail_view"),
@@ -43,5 +48,25 @@ urlpatterns = [
     path("tags/read", views.tags_read_view, name="tags_read_view"),
     path(
         "tags/write/<str:animal_pub_id>", views.tags_write_view, name="tags_write_view"
+    ),
+    path(
+        "herds/<str:public_id>/records",
+        views.RecordsListView.as_view(),
+        name="records_list_view",
+    ),
+    path(
+        "herds/<str:public_id>/records/<slug:form_slug>",
+        views.RecordsCreateView.as_view(),
+        name="records_create_view",
+    ),
+    path(
+        "animals/<str:public_id>/records",
+        views.RecordsListView.as_view(),
+        name="records_list_view",
+    ),
+    path(
+        "animals/<str:public_id>/records/<slug:form_slug>",
+        views.RecordsCreateView.as_view(),
+        name="records_create_view",
     ),
 ]
