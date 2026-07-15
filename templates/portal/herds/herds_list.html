@@ -5,23 +5,46 @@ HW - View Herds
 {% endblock title %}
 
 {% block content %}
-<div>
-    <h2 class="text-3xl text-primary">View Herds</h2>
-    <a href="{% url 'portal:herds_create_view' farm_pub_id=farm_pub_id %}" class="btn btn-primary">
-        Add Herd
-    </a>
-    <ul class="list">
+<div class="mx-auto flex max-w-6xl flex-col gap-6 py-6">
+    <div class="hero rounded-box bg-base-200 p-6 shadow-sm">
+        <div class="hero-content w-full flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+                <div class="badge badge-secondary badge-outline mb-3">Herds for {{ farm.name }}</div>
+                <h1 class="text-3xl font-bold text-primary">Manage herds</h1>
+                <p class="py-3 text-sm text-base-content/70">Create separate production groups and jump straight to each animal list.</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <a href="{% url 'portal:herds_create_view' farm_pub_id=farm_pub_id %}" class="btn btn-primary">Add herd</a>
+                <a href="{% url 'portal:farms_detail_view' farm_pub_id=farm.public_id %}" class="btn btn-outline">Back to farm</a>
+            </div>
+        </div>
+    </div>
+
+    {% if herds %}
+    <div class="grid gap-4 lg:grid-cols-2">
         {% for herd in herds %}
-        <li class="list-row flex items-center justify-between">
-            {{ herd.name }}
-            <a href="{% url 'portal:animals_list_view' herd_pub_id=herd.public_id %}" class="btn btn-secondary">
-                View Animals
-            </a>
-            <a href="{% url 'portal:herds_detail_view' herd_pub_id=herd.public_id %}" class="btn btn-primary">
-                View Details
-            </a>
-        </li>
+        <div class="card bg-base-100 shadow-sm">
+            <div class="card-body">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <h2 class="card-title">{{ herd.name }}</h2>
+                        <p class="text-sm text-base-content/70">{{ herd.animals.count }} animal{{ herd.animals.count|pluralize }} tracked</p>
+                    </div>
+                    <div class="badge badge-info">{{ herd.animal_naming_schema }}</div>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <a href="{% url 'portal:animals_list_view' herd_pub_id=herd.public_id %}" class="btn btn-primary btn-sm">View animals</a>
+                    <a href="{% url 'portal:herds_detail_view' herd_pub_id=herd.public_id %}" class="btn btn-outline btn-sm">Edit herd</a>
+                </div>
+            </div>
+        </div>
         {% endfor %}
-    </ul>
+    </div>
+    {% else %}
+    <div class="card border border-dashed border-base-300 bg-base-100 p-8 text-center shadow-sm">
+        <h2 class="text-xl font-semibold">No herds yet</h2>
+        <p class="mt-2 text-sm text-base-content/70">Create your first herd so you can start adding animals.</p>
+    </div>
+    {% endif %}
 </div>
 {% endblock content %}

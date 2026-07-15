@@ -5,23 +5,57 @@ HW - My Farms
 {% endblock title %}
 
 {% block content %}
-<div>
-    <h2 class="text-3xl text-primary">My Farms</h2>
-    <ul class="list">
+<div class="mx-auto flex max-w-6xl flex-col gap-6 py-6">
+    <div class="hero rounded-box bg-base-200 p-6 shadow-sm">
+        <div class="hero-content w-full flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+                <div class="badge badge-primary badge-outline mb-3">Farm overview</div>
+                <h1 class="text-3xl font-bold text-primary">Manage your farms</h1>
+                <p class="py-3 text-sm text-base-content/70">Keep each farm’s herds, animals, and key details in one
+                    place.</p>
+            </div>
+            <a href="{% url 'portal:farms_create_view' %}" class="btn btn-primary">Create a farm</a>
+        </div>
+    </div>
+
+    {% if farms %}
+    <div class="grid gap-4 lg:grid-cols-2">
         {% for farm in farms %}
-        <li class="list-row flex items-center justify-between">
-            {{ farm.name }}
-            <a href="{% url 'portal:herds_list_view' farm_pub_id=farm.public_id %}" class="btn btn-primary">
-                View Herds
-            </a>
-            <a href="{% url 'portal:herds_create_view' farm_pub_id=farm.public_id %}" class="btn btn-secondary">
-                Add Herd
-            </a>
-            <a href="{% url 'portal:farms_detail_view' farm_pub_id=farm.public_id %}" class="btn btn-ghost">
-                Edit
-            </a>
-        </li>
+        <div class="card bg-base-100 shadow-sm">
+            <div class="card-body">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <h2 class="card-title">{{ farm.name }}</h2>
+                        <p class="text-sm text-base-content/70">
+                            {% if farm.location %}{{ farm.location }}{% else %}Location not set yet{% endif %}
+                        </p>
+                    </div>
+                    <div class="badge badge-secondary">{{ farm.animal_groups.count }} herds</div>
+                </div>
+
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <a href="{% url 'portal:herds_list_view' farm_pub_id=farm.public_id %}"
+                        class="btn btn-primary btn-sm">
+                        View herds
+                    </a>
+                    <a href="{% url 'portal:herds_create_view' farm_pub_id=farm.public_id %}"
+                        class="btn btn-outline btn-sm">
+                        Add herd
+                    </a>
+                    <a href="{% url 'portal:farms_detail_view' farm_pub_id=farm.public_id %}"
+                        class="btn btn-ghost btn-sm">
+                        Edit farm
+                    </a>
+                </div>
+            </div>
+        </div>
         {% endfor %}
-    </ul>
+    </div>
+    {% else %}
+    <div class="card border border-dashed border-base-300 bg-base-100 p-8 text-center shadow-sm">
+        <h2 class="text-xl font-semibold">No farms yet</h2>
+        <p class="mt-2 text-sm text-base-content/70">Create your first farm to start grouping herds and animals.</p>
+    </div>
+    {% endif %}
 </div>
 {% endblock content %}

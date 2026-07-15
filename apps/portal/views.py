@@ -127,7 +127,7 @@ def farms_list_view(request):
 def farms_detail_view(request, farm_pub_id):
     farm = get_object_or_404(Farm, public_id=farm_pub_id)
     form = FarmForm(instance=farm)
-    return render(request, "portal/farms/farms_view.html", {"form": form})
+    return render(request, "portal/farms/farms_view.html", {"form": form, "farm": farm})
 
 
 @login_required
@@ -167,7 +167,7 @@ def herds_list_view(request, farm_pub_id):
     return render(
         request,
         "portal/herds/herds_list.html",
-        {"herds": herds, "farm_pub_id": farm_pub_id},
+        {"herds": herds, "farm": farm, "farm_pub_id": farm_pub_id},
     )
 
 
@@ -242,7 +242,7 @@ def animals_list_view(request, herd_pub_id):
     return render(
         request,
         "portal/animals/animals_list.html",
-        {"herd_pub_id": herd_pub_id, "animals": animals},
+        {"herd_pub_id": herd_pub_id, "herd": herd, "farm": herd.farm, "animals": animals},
     )
 
 

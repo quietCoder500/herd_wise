@@ -5,36 +5,60 @@ HW - View Animals
 {% endblock title %}
 
 {% block content %}
-<div class="space-y-4">
-    <div class="flex items-center justify-between">
-        <h2 class="text-3xl text-primary">View Animals</h2>
-        <a href="{% url 'portal:animals_create_view' herd_pub_id=herd_pub_id %}" class="btn btn-primary">
-            Add Animal
-        </a>
-        <a href="{% url 'portal:animals_mass_create_view' herd_pub_id=herd_pub_id %}" class="btn btn-primary">
-            Add Multiple Animals
-        </a>
+<div class="mx-auto flex max-w-6xl flex-col gap-6 py-6">
+    <div class="hero rounded-box bg-base-200 p-6 shadow-sm">
+        <div class="hero-content w-full flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+                <div class="badge badge-accent badge-outline mb-3">Animals in {{ herd.name }}</div>
+                <h1 class="text-3xl font-bold text-primary">Track animals</h1>
+                <p class="py-3 text-sm text-base-content/70">Review each animal, write its tag, and open the full record
+                    quickly.</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <a href="{% url 'portal:animals_create_view' herd_pub_id=herd_pub_id %}" class="btn btn-primary">Add
+                    animal</a>
+                <a href="{% url 'portal:animals_mass_create_view' herd_pub_id=herd_pub_id %}"
+                    class="btn btn-outline">Add multiple</a>
+            </div>
+        </div>
     </div>
 
-    <ul class="list">
+    {% if animals %}
+    <div class="grid gap-4 lg:grid-cols-2">
         {% for animal in animals %}
-        <li class="list-row flex flex-col md:flex-row items-center justify-between gap-3">
-            <span>{{ animal.formatted_name }}</span>
-            <div class="flex gap-2">
-                <div class="tooltip" data-tip="Write the animal's tag ID to an NFC tag.">
-                    <button onclick="write_tag(this, '{{ animal.tag_id }}')" class="btn btn-primary">Write Tag</button>
+        <div class="card bg-base-100 shadow-sm">
+            <div class="card-body">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <h2 class="card-title">{{ animal.formatted_name }}</h2>
+                        <p class="text-sm text-base-content/70">
+                            {% if animal.breed %}{{ animal.breed }} • {% endif %}{{ animal.get_category_display }}
+                        </p>
+                    </div>
+                    <div class="badge badge-info">{{ animal.sex|default:'Unknown' }}</div>
                 </div>
-                <a href="{% url 'portal:animals_detail_view' animal_pub_id=animal.public_id %}" class="btn btn-primary">
-                    View Details
-                </a>
+
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <div class="tooltip" data-tip="Write the animal's tag ID to an NFC tag.">
+                        <button onclick="write_tag(this, '{{ animal.tag_id }}')" class="btn btn-primary btn-sm">Write
+                            tag</button>
+                    </div>
+                    <a href="{% url 'portal:animals_detail_view' animal_pub_id=animal.public_id %}"
+                        class="btn btn-outline btn-sm">View details</a>
+                </div>
             </div>
-        </li>
+        </div>
         {% endfor %}
-    </ul>
+    </div>
+    {% else %}
+    <div class="card border border-dashed border-base-300 bg-base-100 p-8 text-center shadow-sm">
+        <h2 class="text-xl font-semibold">No animals yet</h2>
+        <p class="mt-2 text-sm text-base-content/70">Add your first animal to start building this herd.</p>
+    </div>
+    {% endif %}
+
     <script>
         async function write_tag(buttonElement, tag_id) {
-            // TODO: Add an abort handler to cancel the write operation if the user navigates away or clicks a cancel button. https://developer.chrome.com/docs/capabilities/nfc#abort_nfc_operations
-            // 1. Check if the browser even knows what NDEFReader is
             if (!('NDEFReader' in window)) {
                 buttonElement.disabled = true;
                 alert("NFC is not supported in this browser. Please use a compatible browser (like Chrome or Edge) on an Android device or a desktop with NFC support.");

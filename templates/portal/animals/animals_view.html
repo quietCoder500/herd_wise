@@ -5,12 +5,28 @@ HW - Edit Animal
 {% endblock title %}
 
 {% block content %}
-<div>
-    <h2 class="text-3xl text-primary">Edit Animal</h2>
-    <form class="flex flex-col gap-4" method="post"
-        action="{% url 'portal:animals_detail_view' animal_pub_id=animal.public_id %}">
-        {% csrf_token %}
-        {% include '_components/_standard_form.html' %}
-    </form>
+<div class="mx-auto max-w-3xl py-6">
+    <div class="card bg-base-100 shadow-sm">
+        <div class="card-body">
+            <div class="mb-3">
+                <div class="badge badge-accent badge-outline mb-3">Animal details</div>
+                <h1 class="text-3xl font-bold text-primary">Edit {{ animal.formatted_name }}</h1>
+                <p class="mt-2 text-sm text-base-content/70">Update the animal record and keep its profile current.</p>
+            </div>
+
+            <form class="space-y-4" method="post"
+                action="{% url 'portal:animals_detail_view' animal_pub_id=animal.public_id %}">
+                {% csrf_token %}
+                <div class="rounded-box bg-base-200 p-4">
+                    {% include '_components/_standard_form.html' %}
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <button type="submit" class="btn btn-primary">Save animal</button>
+                    <a href="{% url 'portal:animals_list_view' herd_pub_id=animal.group.public_id %}"
+                        class="btn btn-ghost">Back to animals</a>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 {% endblock content %}

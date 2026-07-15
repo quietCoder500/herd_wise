@@ -5,11 +5,29 @@ HW - Edit Farm
 {% endblock title %}
 
 {% block content %}
-<div>
-    <h2 class="text-3xl text-primary">Edit Farm</h2>
-    <form class="flex flex-col gap-4" method="post" action="/portal/farms/{{ form.instance.public_id }}">
-        {% csrf_token %}
-        {% include '_components/_standard_form.html' %}
-    </form>
+<div class="mx-auto max-w-3xl py-6">
+    <div class="card bg-base-100 shadow-sm">
+        <div class="card-body">
+            <div class="mb-3">
+                <div class="badge badge-secondary badge-outline mb-3">Farm details</div>
+                <h1 class="text-3xl font-bold text-primary">{% if form.instance.pk %}Edit {{ farm.name }}{% else
+                    %}Create a farm{% endif %}</h1>
+                <p class="mt-2 text-sm text-base-content/70">Update the farm profile and keep location details current.
+                </p>
+            </div>
+
+            <form class="space-y-4" method="post"
+                action="{% url 'portal:farms_detail_view' farm_pub_id=form.instance.public_id %}">
+                {% csrf_token %}
+                <div class="rounded-box bg-base-200 p-4">
+                    {% include '_components/_standard_form.html' %}
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <button type="submit" class="btn btn-primary">Save farm</button>
+                    <a href="{% url 'portal:farms_list_view' %}" class="btn btn-ghost">Back to farms</a>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 {% endblock content %}
