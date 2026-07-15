@@ -1,8 +1,8 @@
 {% extends 'portal/layout.html' %}
 
 {% block content %}
-<form action="{% url 'portal:records_create_view' public_id=public_id form_slug=template.slug %}" method="post">
-    {{ form }}
+<form action="{% url 'portal:animal_records_create_view' slug=slug form_slug=template.slug %}" method="post">
+    {%include '_components/_standard_form.html' %}
     {% csrf_token %}
     <button type="submit" class="btn btn-primary">Create</button>
 </form>

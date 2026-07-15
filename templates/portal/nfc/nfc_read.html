@@ -15,7 +15,7 @@
         <div class="space-y-2">
             <label for="public-id" class="label">Animal Public ID</label>
             <div class="flex gap-3">
-                <input id="public-id" name="public_id" type="text" class="input input-bordered flex-1"
+                <input id="public-id" name="slug" type="text" class="input input-bordered flex-1"
                     placeholder="Scan NFC tag to populate this field" required>
                 <button type="button" id="read-nfc-button" class="btn btn-primary">
                     Read NFC Tag
@@ -26,10 +26,13 @@
         <div class="space-y-2">
             <label for="template-slug" class="label">Record Form</label>
             <select id="template-slug" name="template_slug" class="select select-bordered w-full" required>
-                <option value="">Select a form</option>
+                {% if templates|length == 0 %}
+                <option value="" disabled selected>No record forms available</option>
+                {% else %}
                 {% for template in templates %}
                 <option value="{{ template.slug }}">{{ template.name }}</option>
                 {% endfor %}
+                {% endif %}
             </select>
         </div>
 
@@ -52,7 +55,9 @@
             }
 
             try {
+                readButton.disabled = true;
                 const ndef = new window.NDEFReader();
+                readButton.textContent = 'Scanning...';
                 await ndef.scan();
 
                 ndef.onreading = (event) => {
@@ -66,6 +71,11 @@
             } catch (error) {
                 console.error(error);
                 window.alert('Unable to read the NFC tag from this browser. Enter the public ID manually instead.');
+            } finally {
+                readButton.disabled = false;
+                setTimeout(() => {
+                    readButton.textContent = 'Read NFC Tag';
+                }, 1000);
             }
         });
     }

@@ -73,7 +73,7 @@ class Search(LoginRequiredMixin, View):
                         "score": score_result(farm.name),
                         "url": reverse(
                             "portal:farms_detail_view",
-                            kwargs={"farm_pub_id": farm.public_id},
+                            kwargs={"slug": farm.slug},
                         ),
                     }
                 )
@@ -85,7 +85,7 @@ class Search(LoginRequiredMixin, View):
                         "score": score_result(herd.name),
                         "url": reverse(
                             "portal:herds_detail_view",
-                            kwargs={"herd_pub_id": herd.public_id},
+                            kwargs={"slug": herd.slug},
                         ),
                     }
                 )
@@ -97,7 +97,7 @@ class Search(LoginRequiredMixin, View):
                         "score": score_result(animal.formatted_name),
                         "url": reverse(
                             "portal:animals_detail_view",
-                            kwargs={"animal_pub_id": animal.public_id},
+                            kwargs={"slug": animal.slug},
                         ),
                     }
                 )
@@ -119,13 +119,13 @@ class Search(LoginRequiredMixin, View):
 
 @login_required
 def farms_list_view(request):
-    farms = get_list_or_404(Farm, users=request.user)
+    farms = Farm.objects.filter(users=request.user)
     return render(request, "portal/farms/farms_list.html", {"farms": farms})
 
 
 @login_required
-def farms_detail_view(request, farm_pub_id):
-    farm = get_object_or_404(Farm, public_id=farm_pub_id)
+def farms_detail_view(request, slug):
+    farm = get_object_or_404(Farm, slug=slug)
     form = FarmForm(instance=farm)
     return render(request, "portal/farms/farms_view.html", {"form": form, "farm": farm})
 
@@ -143,7 +143,7 @@ def farms_create_view(request):
             return redirect(
                 reverse(
                     "portal:farms_detail_view",
-                    kwargs={"farm_pub_id": new_farm.public_id},
+                    kwargs={"slug": new_farm.slug},
                 )
             )
         else:
@@ -161,48 +161,50 @@ def farms_create_view(request):
 
 
 @login_required
-def herds_list_view(request, farm_pub_id):
-    farm = get_object_or_404(Farm, users=request.user, public_id=farm_pub_id)
-    herds = get_list_or_404(AnimalGroup, farm=farm)
+def herds_list_view(request, slug):
+    farm = get_object_or_404(Farm, users=request.user, slug=slug)
+    herds = AnimalGroup.objects.filter(farm=farm)
     return render(
         request,
         "portal/herds/herds_list.html",
-        {"herds": herds, "farm": farm, "farm_pub_id": farm_pub_id},
+        {"herds": herds, "farm": farm, "farm_slug": slug},
     )
 
 
 @login_required
-def herds_create_view(request, farm_pub_id):
-    farm = get_object_or_404(Farm, users=request.user, public_id=farm_pub_id)
+def herds_create_view(request, slug):
+    farm = get_object_or_404(Farm, users=request.user, slug=slug)
     if request.method == "POST":
         form = HerdForm(request.POST)
         if form.is_valid():
+            print("Valid form data:", form.cleaned_data)  # Debugging line
             new_herd = form.save(commit=False)
             new_herd.farm = farm
             new_herd.save()
+            print(new_herd.name, new_herd.slug, str(new_herd))  # Debugging line
             messages.success(request, f"Successfully created herd {new_herd.name}.")
             return redirect(
                 reverse(
                     "portal:herds_detail_view",
-                    kwargs={"herd_pub_id": new_herd.public_id},
+                    kwargs={"slug": new_herd.slug},
                 )
             )
         else:
             return render(
                 request,
                 "portal/herds/herds_create.html",
-                {"form": form, "farm_pub_id": farm_pub_id},
+                {"form": form, "farm_slug": farm.slug},
             )
     return render(
         request,
         "portal/herds/herds_create.html",
-        {"form": HerdForm(), "farm_pub_id": farm_pub_id},
+        {"form": HerdForm(), "farm_slug": farm.slug},
     )
 
 
 @login_required
-def herds_detail_view(request, herd_pub_id):
-    herd = get_object_or_404(AnimalGroup, public_id=herd_pub_id)
+def herds_detail_view(request, slug):
+    herd = get_object_or_404(AnimalGroup, slug=slug)
     form = HerdForm(instance=herd)
     if request.method == "POST":
         form = HerdForm(request.POST, instance=herd)
@@ -212,19 +214,19 @@ def herds_detail_view(request, herd_pub_id):
             return redirect(
                 reverse(
                     "portal:herds_detail_view",
-                    kwargs={"herd_pub_id": herd.public_id},
+                    kwargs={"slug": herd.slug},
                 )
             )
         else:
             return render(
                 request,
                 "portal/herds/herds_view.html",
-                {"form": form, "herd": herd, "herd_pub_id": herd_pub_id},
+                {"form": form, "herd": herd, "herd_slug": slug},
             )
     return render(
         request,
         "portal/herds/herds_view.html",
-        {"form": form, "herd": herd, "herd_pub_id": herd_pub_id},
+        {"form": form, "herd": herd, "herd_slug": slug},
     )
 
 
@@ -234,23 +236,24 @@ def herds_detail_view(request, herd_pub_id):
 
 
 @login_required
-def animals_list_view(request, herd_pub_id):
-    herd = get_object_or_404(
-        AnimalGroup, farm__users=request.user, public_id=herd_pub_id
-    )
+def animals_list_view(request, slug):
+    herd = get_object_or_404(AnimalGroup, farm__users=request.user, slug=slug)
     animals = Animal.objects.filter(group=herd)
     return render(
         request,
         "portal/animals/animals_list.html",
-        {"herd_pub_id": herd_pub_id, "herd": herd, "farm": herd.farm, "animals": animals},
+        {
+            "herd_slug": slug,
+            "herd": herd,
+            "farm": herd.farm,
+            "animals": animals,
+        },
     )
 
 
 @login_required
-def animals_create_view(request, herd_pub_id):
-    herd = get_object_or_404(
-        AnimalGroup, farm__users=request.user, public_id=herd_pub_id
-    )
+def animals_create_view(request, slug):
+    herd = get_object_or_404(AnimalGroup, farm__users=request.user, slug=slug)
     if request.method == "POST":
         form = AnimalForm(request.POST, request.FILES)
         if form.is_valid():
@@ -261,27 +264,27 @@ def animals_create_view(request, herd_pub_id):
             return redirect(
                 reverse(
                     "portal:animals_detail_view",
-                    kwargs={"animal_pub_id": new_animal.public_id},
+                    kwargs={"slug": new_animal.slug},
                 )
             )
         else:
             return render(
                 request,
                 "portal/animals/animals_create.html",
-                {"form": form, "herd_pub_id": herd_pub_id},
+                {"form": form, "herd_slug": slug},
             )
     else:
         form = AnimalForm()
         return render(
             request,
             "portal/animals/animals_create.html",
-            {"form": form, "herd_pub_id": herd_pub_id},
+            {"form": form, "herd_slug": slug},
         )
 
 
 @login_required
-def animals_detail_view(request, animal_pub_id):
-    animal = get_object_or_404(Animal, public_id=animal_pub_id)
+def animals_detail_view(request, slug):
+    animal = get_object_or_404(Animal, slug=slug)
     form = AnimalForm(instance=animal)
     if request.method == "POST":
         form = AnimalForm(request.POST, request.FILES, instance=animal)
@@ -290,7 +293,7 @@ def animals_detail_view(request, animal_pub_id):
             return redirect(
                 reverse(
                     "portal:animals_detail_view",
-                    kwargs={"animal_pub_id": animal.public_id},
+                    kwargs={"slug": animal.slug},
                 )
             )
         else:
@@ -316,10 +319,10 @@ def tags_read_view(request):
     templates = RecordTemplate.objects.filter(farm__users=request.user).order_by("name")
 
     if request.method == "POST":
-        public_id = request.POST.get("public_id", "").strip()
+        slug = request.POST.get("slug", "").strip()
         template_slug = request.POST.get("template_slug", "").strip()
 
-        if not public_id:
+        if not slug:
             messages.error(request, "Please read an NFC tag before continuing.")
         elif not template_slug:
             messages.error(request, "Please select a record form.")
@@ -331,7 +334,7 @@ def tags_read_view(request):
                 return redirect(
                     reverse(
                         "portal:records_create_view",
-                        kwargs={"public_id": public_id, "form_slug": template.slug},
+                        kwargs={"slug": slug, "form_slug": template.slug},
                     )
                 )
 
@@ -343,9 +346,21 @@ def tags_read_view(request):
 
 
 @login_required
-def tags_write_view(request, animal_pub_id):
-    animal = get_object_or_404(Animal, public_id=animal_pub_id)
+def tags_write_view(request, slug):
+    animal = get_object_or_404(Animal, slug=slug)
     return render(request, "portal/nfc/tag_write_modal.html", {"tag_id": animal.tag_id})
+
+
+@login_required
+def tags_link_redirect(request, slug):
+    animal = get_object_or_404(Animal, slug=slug)
+    forms = get_list_or_404(RecordTemplate, farm=animal.farm)
+    return redirect(
+        reverse(
+            "portal:animal_records_create_view",
+            kwargs={"slug": animal.slug, "form_slug": forms[0].slug},
+        )
+    )
 
 
 #
@@ -371,7 +386,7 @@ def all_records_list_view(request):
 
 
 class RecordsCreateView(LoginRequiredMixin, View):
-    def get(self, request, public_id, form_slug):
+    def get(self, request, slug, form_slug):
         template = get_object_or_404(RecordTemplate, slug=form_slug)
         model_options = ReportableModel.objects.filter(farm__users=request.user)
         form = DynamicRecordForm(template=template, model_options=model_options)
@@ -379,10 +394,10 @@ class RecordsCreateView(LoginRequiredMixin, View):
         return render(
             request,
             "portal/records/records_create.html",
-            {"form": form, "template": template, "public_id": public_id},
+            {"form": form, "template": template, "slug": slug},
         )
 
-    def post(self, request, public_id, form_slug):
+    def post(self, request, slug, form_slug):
         template = get_object_or_404(RecordTemplate, slug=form_slug)
         model_options = ReportableModel.objects.filter(farm__users=request.user)
         form = DynamicRecordForm(
@@ -390,22 +405,31 @@ class RecordsCreateView(LoginRequiredMixin, View):
         )
         if form.is_valid():
             LivestockRecord.objects.create(
-                report_link=form.cleaned_data.pop("report_link"),
+                report_link=get_object_or_404(
+                    ReportableModel, farm__users=request.user, slug=slug
+                ),
                 template=template,
                 data=form.cleaned_data,
             ).save()
+            messages.success(request, "Record Created")
 
-        return render(
+        return redirect(
+            reverse(
+                "portal:all_records_list_view",
+            )
+        )
+
+    """render(
             request,
             "portal/records/records_create.html",
-            {"form": form, "template": template, "public_id": public_id},
-        )
+            {"form": form, "template": template, "slug": slug},
+        )"""
 
 
 class RecordsListView(LoginRequiredMixin, View):
-    def get(self, request, public_id):
+    def get(self, request, slug):
         reportable_model = get_object_or_404(
-            ReportableModel, farm__users=request.user, public_id=public_id
+            ReportableModel, farm__users=request.user, slug=slug
         )
         records = LivestockRecord.objects.filter(report_link=reportable_model)
         return render(
@@ -473,10 +497,8 @@ class TemplateCreateView(LoginRequiredMixin, View):
 
 
 @login_required
-def mass_create_animals_view(request, herd_pub_id):
-    herd = get_object_or_404(
-        AnimalGroup, farm__users=request.user, public_id=herd_pub_id
-    )
+def mass_create_animals_view(request, slug):
+    herd = get_object_or_404(AnimalGroup, farm__users=request.user, slug=slug)
     if request.method == "POST":
         form = MassAnimalForm(request.POST)
         if form.is_valid():
@@ -499,7 +521,7 @@ def mass_create_animals_view(request, herd_pub_id):
                     return render(
                         request,
                         "portal/animals/animals_create_mass.html",
-                        {"form": MassAnimalForm(), "herd_pub_id": herd_pub_id},
+                        {"form": MassAnimalForm(), "herd_slug": slug},
                     )
             except Exception as e:
                 messages.error(
@@ -509,18 +531,18 @@ def mass_create_animals_view(request, herd_pub_id):
                 return render(
                     request,
                     "portal/animals/animals_create_mass.html",
-                    {"form": form, "herd_pub_id": herd_pub_id},
+                    {"form": form, "slug": slug},
                 )
         else:
             return render(
                 request,
                 "portal/animals/animals_create_mass.html",
-                {"form": form, "herd_pub_id": herd_pub_id},
+                {"form": form, "slug": slug},
             )
     else:
         form = MassAnimalForm()
         return render(
             request,
             "portal/animals/animals_create_mass.html",
-            {"form": form, "herd_pub_id": herd_pub_id},
+            {"form": form, "slug": slug},
         )

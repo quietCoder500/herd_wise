@@ -21,11 +21,6 @@ class DynamicRecordForm(forms.Form):
         self.model_options = kwargs.pop("model_options", None)
         super().__init__(*args, **kwargs)
         if self.template and self.template.schema and self.model_options:
-            # add initial link model
-            self.fields["report_link"] = forms.ModelChoiceField(
-                self.model_options, required=True
-            )
-
             for field_def in self.template.schema:
                 field_name = field_def["name"]
                 field_label = field_def["label"]
@@ -108,7 +103,9 @@ class HerdForm(forms.ModelForm):
 
 
 class AnimalForm(forms.ModelForm):
-    name = forms.CharField(widget=forms.TextInput(attrs={"class": "input"}))
+    name = forms.CharField(
+        required=False, widget=forms.TextInput(attrs={"class": "input"})
+    )
     date_of_birth = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}))
     category = forms.CharField(
         widget=forms.Select(

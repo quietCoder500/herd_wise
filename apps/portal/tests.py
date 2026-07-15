@@ -12,7 +12,7 @@ from apps.portal.models import (
 
 
 class FarmCreateViewTests(TestCase):
-    def test_create_view_redirects_to_farm_detail_with_public_id(self):
+    def test_create_view_redirects_to_farm_detail_with_slug(self):
         user = get_user_model().objects.create_user(
             username="tester", password="secret"
         )
@@ -27,7 +27,7 @@ class FarmCreateViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(
             response,
-            reverse("portal:farms_detail_view", kwargs={"farm_pub_id": farm.public_id}),
+            reverse("portal:farms_detail_view", kwargs={"slug": farm.slug}),
         )
 
 
@@ -53,17 +53,17 @@ class SearchViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            reverse("portal:farms_detail_view", kwargs={"farm_pub_id": farm.public_id}),
+            reverse("portal:farms_detail_view", kwargs={"slug": farm.slug}),
         )
         self.assertContains(
             response,
-            reverse("portal:herds_detail_view", kwargs={"herd_pub_id": herd.public_id}),
+            reverse("portal:herds_detail_view", kwargs={"slug": herd.slug}),
         )
         self.assertContains(
             response,
             reverse(
                 "portal:animals_detail_view",
-                kwargs={"animal_pub_id": animal.public_id},
+                kwargs={"slug": animal.slug},
             ),
         )
 
@@ -133,7 +133,7 @@ class TagReadViewTests(TestCase):
         response = self.client.post(
             reverse("portal:tags_read_view"),
             {
-                "public_id": "animal-public-id",
+                "slug": "animal-public-id",
                 "template_slug": "health-check",
             },
         )
@@ -143,7 +143,7 @@ class TagReadViewTests(TestCase):
             response,
             reverse(
                 "portal:records_create_view",
-                kwargs={"public_id": "animal-public-id", "form_slug": "health-check"},
+                kwargs={"slug": "animal-public-id", "form_slug": "health-check"},
             ),
         )
 

@@ -14,15 +14,14 @@ HW - Create a herd
                 <p class="mt-2 text-sm text-base-content/70">Create a new group for your animals within this farm.</p>
             </div>
 
-            <form class="space-y-4" method="post" action="{% url 'portal:herds_create_view' farm_pub_id=farm_pub_id %}">
+            <form class="space-y-4" method="post" action="{% url 'portal:herds_create_view' slug=farm_slug %}">
                 {% csrf_token %}
                 <div class="rounded-box bg-base-200 p-4">
                     {% include '_components/_standard_form.html' %}
                 </div>
                 <div class="flex flex-wrap gap-3">
                     <button type="submit" class="btn btn-primary">Create herd</button>
-                    <a href="{% url 'portal:herds_list_view' farm_pub_id=farm_pub_id %}"
-                        class="btn btn-ghost">Cancel</a>
+                    <a href="{% url 'portal:herds_list_view' slug=farm_slug %}" class="btn btn-ghost">Cancel</a>
                 </div>
             </form>
         </div>

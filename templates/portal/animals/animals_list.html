@@ -15,10 +15,10 @@ HW - View Animals
                     quickly.</p>
             </div>
             <div class="flex flex-wrap gap-2">
-                <a href="{% url 'portal:animals_create_view' herd_pub_id=herd_pub_id %}" class="btn btn-primary">Add
+                <a href="{% url 'portal:animals_create_view' slug=herd_slug %}" class="btn btn-primary">Add
                     animal</a>
-                <a href="{% url 'portal:animals_mass_create_view' herd_pub_id=herd_pub_id %}"
-                    class="btn btn-outline">Add multiple</a>
+                <a href="{% url 'portal:animals_mass_create_view' slug=herd_slug %}" class="btn btn-outline">Add
+                    multiple</a>
             </div>
         </div>
     </div>
@@ -40,10 +40,12 @@ HW - View Animals
 
                 <div class="mt-4 flex flex-wrap gap-2">
                     <div class="tooltip" data-tip="Write the animal's tag ID to an NFC tag.">
-                        <button onclick="write_tag(this, '{{ animal.tag_id }}')" class="btn btn-primary btn-sm">Write
+                        <button
+                            onclick="write_tag(this, '{{ request.scheme }}://{{ request.get_host }}{% url 'tag_redirect' slug=animal.slug%}')"
+                            class="btn btn-primary btn-sm">Write
                             tag</button>
                     </div>
-                    <a href="{% url 'portal:animals_detail_view' animal_pub_id=animal.public_id %}"
+                    <a href="{% url 'portal:animals_detail_view' slug=animal.slug %}"
                         class="btn btn-outline btn-sm">View details</a>
                 </div>
             </div>

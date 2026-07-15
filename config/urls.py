@@ -21,11 +21,13 @@ from django.contrib import admin
 from django.urls import include, path
 
 from apps.users.views import StandardSignupView
+from apps.portal.views import tags_link_redirect
 
 urlpatterns = [
     path("", include("apps.pages.urls")),
     path("admin/", admin.site.urls),
     path("accounts/signup/", StandardSignupView.as_view(), name="account_signup"),
+    path("tag/<slug:slug>/", tags_link_redirect, name="tag_redirect"),
     path("accounts/", include("allauth.urls")),
     path(
         "portal/",
@@ -47,26 +49,26 @@ if settings.DEBUG:
 /portal/search/                                   # search.html
 /portal/farms/                                    # farms/farms_list.html
 /portal/farms/create                              # farms/farms_create.html
-/portal/farms/<str:public_id>                     # farms/farms_view.html
+/portal/farms/<str:slug>                     # farms/farms_view.html
 
-/portal/farms/<str:public_id>/forms               # forms/forms_list.html
-/portal/farms/<str:public_id>/forms/create        # forms/forms_create.html
-/portal/farms/<str:public_id>/forms/<slug:form_slug>        # forms/forms_view.html
+/portal/farms/<str:slug>/forms               # forms/forms_list.html
+/portal/farms/<str:slug>/forms/create        # forms/forms_create.html
+/portal/farms/<str:slug>/forms/<slug:form_slug>        # forms/forms_view.html
 
-/portal/farms/<str:public_id>/herds/              # herds/herds_list.html
-/portal/farms/<str:public_id>/herds/create        # herds/herds_create.html
-/portal/herds/<str:public_id>                     # herds/herds_view.html
+/portal/farms/<str:slug>/herds/              # herds/herds_list.html
+/portal/farms/<str:slug>/herds/create        # herds/herds_create.html
+/portal/herds/<str:slug>                     # herds/herds_view.html
 
-/portal/herds/<str:public_id>/records             # records/records_list.html
-/portal/herds/<str:public_id>/records/<slug:form_slug>      # records/records_create.html 
+/portal/herds/<str:slug>/records             # records/records_list.html
+/portal/herds/<str:slug>/records/<slug:form_slug>      # records/records_create.html 
 
-/portal/herds/<str:public_id>/animals/            # animals/animals_list.html
-/portal/herds/<str:public_id>/animals/create      # animals/animals_create.html
-/portal/animals/<str:public_id>                   # animals/animals_view.html
+/portal/herds/<str:slug>/animals/            # animals/animals_list.html
+/portal/herds/<str:slug>/animals/create      # animals/animals_create.html
+/portal/animals/<str:slug>                   # animals/animals_view.html
 
-/portal/animals/<str:public_id>/records           # records/records_list.html
-/portal/animals/<str:public_id>/records/<slug:form_slug>    # records/records_create.html
+/portal/animals/<str:slug>/records           # records/records_list.html
+/portal/animals/<str:slug>/records/<slug:form_slug>    # records/records_create.html
 
 /portal/records                                   # records/records_list.html
-/portal/records/<str:public_id>                   # records/records_view.html
+/portal/records/<str:slug>                   # records/records_view.html
 """

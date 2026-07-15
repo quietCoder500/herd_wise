@@ -1,13 +1,17 @@
 import uuid
 from datetime import date
 
-import shortuuid
+import secrets
 from dateutil.relativedelta import relativedelta
 from django.db import models
-from django_extensions.db.fields import ShortUUIDField
 from polymorphic.models import PolymorphicModel
+from slugify import slugify
 
 from apps.users.models import User
+
+
+def generate_url_id():
+    return secrets.token_urlsafe(9)
 
 
 def gen_name_from_schema(obj, schema: str) -> str:
@@ -30,7 +34,7 @@ def get_age(date_of_birth):
 
 class Farm(models.Model):
     name = models.CharField(verbose_name="name", max_length=100)
-    public_id = ShortUUIDField(unique=True, editable=False, default=shortuuid.uuid)
+    slug = models.SlugField(max_length=100, unique=True)
     users = models.ManyToManyField(User, related_name="farms")
     photo = models.ImageField(upload_to="farm_photos/", null=True, blank=True)
     location = models.CharField(
@@ -39,6 +43,12 @@ class Farm(models.Model):
 
     def users_list(self) -> str:
         return "\n".join([u.username + ", " for u in self.users.all()]).rstrip(", ")
+
+    def save(self, *args, **kwargs) -> None:
+        if not self.pk:
+            self.slug = slugify(self.name)
+
+        return super(Farm, self).save(*args, **kwargs)
 
     def __str__(self) -> str:
         return self.name  # pyright: ignore[reportReturnType]
@@ -50,6 +60,14 @@ class ReportableModel(PolymorphicModel):
     farm = models.ForeignKey(
         Farm, on_delete=models.PROTECT, related_name="animal_groups"
     )
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100, unique=True, editable=False)
+
+    def save(self, *args, **kwargs) -> None:
+        if not self.pk:
+            self.slug = slugify(self.name)
+
+        return super(ReportableModel, self).save(*args, **kwargs)
 
     def __str__(self) -> str:
         return str(self.get_real_instance())
@@ -61,8 +79,6 @@ class AnimalGroup(ReportableModel):
         ("AN", "<Animal Name>"),
         ("BI", "<Animal Breed> - <Animal Number>"),
     ]
-    name = models.CharField(max_length=100)
-    public_id = ShortUUIDField(unique=True, editable=False, default=shortuuid.uuid)
     animal_naming_schema = models.CharField(
         max_length=2, choices=NAMING_SCHEMA_CHOICES, default="IC"
     )
@@ -104,7 +120,6 @@ class Animal(ReportableModel):
         ("BS", "Breed Sheep"),
     ]
     SEX_CHOICES = [("M", "Male"), ("F", "Female"), ("U", "Unknown")]
-    public_id = ShortUUIDField(unique=True, default=shortuuid.uuid, editable=False)
 
     category = models.CharField(
         max_length=3, null=False, blank=False, choices=ANIMAL_CATEGORY_CHOICES
@@ -125,7 +140,6 @@ class Animal(ReportableModel):
         default="U",
     )
 
-    name = models.CharField(max_length=50, blank=True, null=True)
     tag_id = models.UUIDField(
         verbose_name="Tag UUID", unique=True, null=True, blank=True, default=uuid.uuid4
     )
@@ -169,7 +183,7 @@ class Animal(ReportableModel):
             self.farm = self.group.farm
 
         # Below runs on first save
-        if not self.id:  # pyright: ignore[reportAttributeAccessIssue]
+        if not self.pk:
             # Incrementing logic for group_index
             largest = (
                 Animal.objects.filter(group=self.group).order_by("group_index").last()
@@ -178,6 +192,9 @@ class Animal(ReportableModel):
                 self.group_index = 1
             else:
                 self.group_index = largest.group_index + 1
+
+            if not self.name:
+                self.name = self.formatted_name
 
         # Below runs on all saves
         # Age calculation logic
@@ -196,6 +213,7 @@ class Animal(ReportableModel):
 
 class RecordTemplate(models.Model):
     """
+    ID type slug
     Schema definition model
 
     Valid syntax:
@@ -221,6 +239,12 @@ class RecordTemplate(models.Model):
     description = models.TextField(blank=True)
     schema = models.JSONField()
 
+    def save(self, *args, **kwargs) -> None:
+        if not self.pk:
+            self.slug = slugify(self.name)
+
+        return super(RecordTemplate, self).save(*args, **kwargs)
+
     def __str__(self) -> str:
         return self.name
 
@@ -229,7 +253,7 @@ class RecordTemplate(models.Model):
 
 
 class LivestockRecord(models.Model):
-    public_id = models.UUIDField(default=uuid.uuid4, editable=False)
+    public_id = models.UUIDField(default=uuid.uuid4, editable=False, db_index=True)
     report_link = models.ForeignKey(ReportableModel, on_delete=models.CASCADE)
     template = models.ForeignKey(RecordTemplate, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)

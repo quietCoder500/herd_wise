@@ -30,16 +30,16 @@ class ReportableModelChildAdmin(PolymorphicChildModelAdmin):
 
 @admin.register(Farm)
 class FarmAdmin(admin.ModelAdmin):
-    list_display = ["name", "users_list", "public_id"]
-    readonly_fields = ("public_id",)
+    list_display = ["name", "users_list", "slug"]
+    readonly_fields = ("slug",)
 
 
 @admin.register(AnimalGroup)
 class AnimalGroupAdmin(ReportableModelChildAdmin):
     base_model = AnimalGroup
     show_in_index = True
-    list_display = ["name", "farm__name", "public_id"]
-    readonly_fields = ("public_id",)
+    list_display = ["name", "farm__name", "slug"]
+    readonly_fields = ("slug",)
 
 
 @admin.register(Animal)
@@ -64,12 +64,12 @@ class AnimalAdmin(ReportableModelChildAdmin):
             {
                 "classes": ["collapse"],
                 "description": "Do not modify unless you know what you are doing!",
-                "fields": ["group_index", "tag_id", "public_id", "id", "farm"],
+                "fields": ["group_index", "tag_id", "slug", "id", "farm"],
             },
         ),
     ]
-    readonly_fields = ("public_id", "id")
-    list_display = ["formatted_name", "name", "group__name", "category", "public_id"]
+    readonly_fields = ("slug", "id")
+    list_display = ["formatted_name", "name", "group__name", "category", "slug"]
     list_filter = ["category"]
 
     def get_form(
@@ -102,4 +102,4 @@ class RecordTemplateAdmin(admin.ModelAdmin):
 
 @admin.register(LivestockRecord)
 class LivestockRecordAdmin(admin.ModelAdmin):
-    readonly_fields = ["public_id"]
+    readonly_fields = ["public_id", "created_at"]

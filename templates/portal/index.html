@@ -44,7 +44,7 @@
                 {% if farms %}
                 <ul class="menu rounded-box bg-base-200 p-2">
                     {% for farm in farms %}
-                    <li><a href="{% url 'portal:farms_detail_view' farm_pub_id=farm.public_id %}">{{ farm.name }}</a>
+                    <li><a href="{% url 'portal:farms_detail_view' slug=farm.slug %}">{{ farm.name }}</a>
                     </li>
                     {% endfor %}
                 </ul>

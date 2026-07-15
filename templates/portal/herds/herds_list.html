@@ -11,11 +11,14 @@ HW - View Herds
             <div>
                 <div class="badge badge-secondary badge-outline mb-3">Herds for {{ farm.name }}</div>
                 <h1 class="text-3xl font-bold text-primary">Manage herds</h1>
-                <p class="py-3 text-sm text-base-content/70">Create separate production groups and jump straight to each animal list.</p>
+                <p class="py-3 text-sm text-base-content/70">Create separate production groups and jump straight to each
+                    animal list.</p>
             </div>
             <div class="flex flex-wrap gap-2">
-                <a href="{% url 'portal:herds_create_view' farm_pub_id=farm_pub_id %}" class="btn btn-primary">Add herd</a>
-                <a href="{% url 'portal:farms_detail_view' farm_pub_id=farm.public_id %}" class="btn btn-outline">Back to farm</a>
+                <a href="{% url 'portal:herds_create_view' slug=farm.slug %}" class="btn btn-primary">Add
+                    herd</a>
+                <a href="{% url 'portal:farms_detail_view' slug=farm.slug %}" class="btn btn-outline">Back to
+                    farm</a>
             </div>
         </div>
     </div>
@@ -28,13 +31,16 @@ HW - View Herds
                 <div class="flex items-start justify-between gap-3">
                     <div>
                         <h2 class="card-title">{{ herd.name }}</h2>
-                        <p class="text-sm text-base-content/70">{{ herd.animals.count }} animal{{ herd.animals.count|pluralize }} tracked</p>
+                        <p class="text-sm text-base-content/70">{{ herd.animals.count }} animal{{
+                            herd.animals.count|pluralize }} tracked</p>
                     </div>
                     <div class="badge badge-info">{{ herd.animal_naming_schema }}</div>
                 </div>
                 <div class="mt-4 flex flex-wrap gap-2">
-                    <a href="{% url 'portal:animals_list_view' herd_pub_id=herd.public_id %}" class="btn btn-primary btn-sm">View animals</a>
-                    <a href="{% url 'portal:herds_detail_view' herd_pub_id=herd.public_id %}" class="btn btn-outline btn-sm">Edit herd</a>
+                    <a href="{% url 'portal:animals_list_view' slug=herd.slug %}" class="btn btn-primary btn-sm">View
+                        animals</a>
+                    <a href="{% url 'portal:herds_detail_view' slug=herd.slug %}" class="btn btn-outline btn-sm">Edit
+                        herd</a>
                 </div>
             </div>
         </div>

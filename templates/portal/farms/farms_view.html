@@ -16,8 +16,7 @@ HW - Edit Farm
                 </p>
             </div>
 
-            <form class="space-y-4" method="post"
-                action="{% url 'portal:farms_detail_view' farm_pub_id=form.instance.public_id %}">
+            <form class="space-y-4" method="post" action="{% url 'portal:farms_detail_view' slug=form.instance.slug %}">
                 {% csrf_token %}
                 <div class="rounded-box bg-base-200 p-4">
                     {% include '_components/_standard_form.html' %}

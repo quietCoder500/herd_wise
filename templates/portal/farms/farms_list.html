@@ -34,16 +34,13 @@ HW - My Farms
                 </div>
 
                 <div class="mt-4 flex flex-wrap gap-2">
-                    <a href="{% url 'portal:herds_list_view' farm_pub_id=farm.public_id %}"
-                        class="btn btn-primary btn-sm">
+                    <a href="{% url 'portal:herds_list_view' slug=farm.slug %}" class="btn btn-primary btn-sm">
                         View herds
                     </a>
-                    <a href="{% url 'portal:herds_create_view' farm_pub_id=farm.public_id %}"
-                        class="btn btn-outline btn-sm">
+                    <a href="{% url 'portal:herds_create_view' slug=farm.slug %}" class="btn btn-outline btn-sm">
                         Add herd
                     </a>
-                    <a href="{% url 'portal:farms_detail_view' farm_pub_id=farm.public_id %}"
-                        class="btn btn-ghost btn-sm">
+                    <a href="{% url 'portal:farms_detail_view' slug=farm.slug %}" class="btn btn-ghost btn-sm">
                         Edit farm
                     </a>
                 </div>

@@ -14,16 +14,15 @@ HW - Edit Animal
                 <p class="mt-2 text-sm text-base-content/70">Update the animal record and keep its profile current.</p>
             </div>
 
-            <form class="space-y-4" method="post"
-                action="{% url 'portal:animals_detail_view' animal_pub_id=animal.public_id %}">
+            <form class="space-y-4" method="post" action="{% url 'portal:animals_detail_view' slug=animal.slug %}">
                 {% csrf_token %}
                 <div class="rounded-box bg-base-200 p-4">
                     {% include '_components/_standard_form.html' %}
                 </div>
                 <div class="flex flex-wrap gap-3">
                     <button type="submit" class="btn btn-primary">Save animal</button>
-                    <a href="{% url 'portal:animals_list_view' herd_pub_id=animal.group.public_id %}"
-                        class="btn btn-ghost">Back to animals</a>
+                    <a href="{% url 'portal:animals_list_view' slug=animal.group.slug %}" class="btn btn-ghost">Back to
+                        animals</a>
                 </div>
             </form>
         </div>
