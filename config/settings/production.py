@@ -9,12 +9,12 @@ sentry_sdk.init(
     send_default_pii=True,
 )
 
+allowed_hosts = os.getenv(
+    "ALLOWED_HOSTS", "localhost,127.0.0.1,0.0.0.0,192.168.1.101,192.168.0.101"
+)
+
 ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-    "0.0.0.0",
-    "192.168.1.101",
-    "192.168.0.101",
+    origin.strip() for origin in allowed_hosts.split(",") if origin.strip()
 ]
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

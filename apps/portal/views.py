@@ -521,7 +521,7 @@ def mass_create_animals_view(request, slug):
                     return render(
                         request,
                         "portal/animals/animals_create_mass.html",
-                        {"form": MassAnimalForm(), "herd_slug": slug},
+                        {"form": MassAnimalForm(), "slug": slug},
                     )
             except Exception as e:
                 messages.error(
