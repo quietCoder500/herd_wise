@@ -41,7 +41,7 @@ HW - View Animals
                 <div class="mt-4 flex flex-wrap gap-2">
                     <div class="tooltip" data-tip="Write the animal's tag ID to an NFC tag.">
                         <button
-                            onclick="write_tag(this, '{{ request.scheme }}://{{ request.get_host }}:8433{% url 'tag_redirect' slug=animal.slug%}')"
+                            onclick="write_tag(this, '{{ request.scheme }}://{{ request.get_host }}:8443{% url 'tag_redirect' slug=animal.slug%}')"
                             class="btn btn-primary btn-sm">Write
                             tag</button>
                     </div>
