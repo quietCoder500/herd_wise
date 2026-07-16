@@ -1,14 +1,12 @@
 #!/bin/bash
+set -e # Exit immediately if any command fails
 
 echo "Pulling latest code from Git..."
 git pull origin master
 
-echo "Rebuilding and starting containers (uv handling dependencies)..."
-docker compose build --no-cache web
+echo "Rebuilding and starting containers..."
+docker compose build web
 docker compose up -d
-
-echo "Building Tailwind assets inside the web container..."
-docker compose exec -e ENV_NAME=Production web sh -lc "cd /app/theme/static_src && npm ci --no-audit --no-fund && npm run build"
 
 echo "Running migrations..."
 docker compose exec -e ENV_NAME=Production web uv run manage.py migrate --noinput
