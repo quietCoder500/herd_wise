@@ -4,6 +4,6 @@
 <form action="{% url 'portal:animal_records_create_view' slug=slug form_slug=template.slug %}" method="post">
     {%include '_components/_standard_form.html' %}
     {% csrf_token %}
-    <button type="submit" class="btn btn-primary">Create</button>
+    <button type="submit" class="btn btn-primary">Create (marker)</button>
 </form>
 {% endblock content %}

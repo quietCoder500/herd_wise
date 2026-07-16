@@ -29,7 +29,16 @@ class DynamicRecordForm(forms.Form):
 
                 if field_type == "number":
                     self.fields[field_name] = forms.FloatField(
-                        label=field_label, required=field_required
+                        label=field_label,
+                        required=field_required,
+                        widget=forms.TextInput(
+                            attrs={
+                                "placeholder": "0.00",
+                                "class": "input input-lg validator",  # Optional: for your CSS styling
+                                "inputmode": "decimal",  # Highly recommended: triggers numeric keypad on mobile
+                            }
+                        ),
+                        error_messages={"invalid": "Enter a valid number."},
                     )
                 elif field_type == "date":
                     self.fields[field_name] = forms.DateField(
@@ -39,17 +48,24 @@ class DynamicRecordForm(forms.Form):
                     )
                 elif field_type == "boolean":
                     self.fields[field_name] = forms.BooleanField(
-                        label=field_label, required=field_required
+                        label=field_label,
+                        required=field_required,
+                        widget=forms.CheckboxInput(
+                            attrs={"class": "checkbox checkbox-xl"}
+                        ),
                     )
                 elif field_type == "char":
                     self.fields[field_name] = forms.CharField(
-                        label=field_label, required=field_required, max_length=255
+                        label=field_label,
+                        required=field_required,
+                        max_length=255,
+                        widget=forms.TextInput(attrs={"class": "input"}),
                     )
                 elif field_type == "text":
                     self.fields[field_name] = forms.CharField(
                         label=field_label,
                         required=field_required,
-                        widget=forms.Textarea,
+                        widget=forms.Textarea(attrs={"class": "textarea"}),
                         max_length=1000,
                     )
                 else:

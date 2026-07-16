@@ -1,10 +1,12 @@
-{% for field in form %}
-<label>{{ field.label_tag }}</label>
-<div>{{ field }}</div>
+<div class="flex flex-col">
+    {% for field in form %}
+    <label class="label text-2xl">
+        {{ field.label_tag }}
+        <div>{{ field }}</div>
+    </label>
+    {% if field.errors %}
+    <span>{{ field.errors }}</span>
+    {% endif %}
 
-{% if field.errors %}
-<span>{{ field.errors }}</span>
-{% endif %}
-
-{% endfor %}
-<input type="submit" class="btn btn-primary" />
+    {% endfor %}
+</div>
