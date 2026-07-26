@@ -258,8 +258,8 @@ class LivestockRecord(models.Model):
         ReportableModel, on_delete=models.CASCADE, related_name="records"
     )
     template = models.ForeignKey(RecordTemplate, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(editable=True)
-    updated_at = models.DateTimeField(editable=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     data = models.JSONField()
 
