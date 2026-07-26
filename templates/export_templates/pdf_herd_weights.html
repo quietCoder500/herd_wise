@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page {
+            size: letter;
+            /* or A4 */
+            margin: 20mm;
+        }
+
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Ensure each new bird starts on a new page, except the first one */
+        .bird-section+.bird-section {
+            page-break-before: always;
+        }
+
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #2c3e50;
+            padding-bottom: 5px;
+            margin-bottom: 5px;
+        }
+
+        .meta-info {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #f4f6f8;
+            font-weight: bold;
+        }
+
+        /* Prevent rows from splitting across pages if possible */
+        tr {
+            page-break-inside: avoid;
+        }
+    </style>
+</head>
+
+<body>
+
+    {% for bird in birds_data %}
+    <div class="bird-section">
+        <h2>{{ bird.animal.formatted_name }}</h2>
+        <div class="meta-info">
+            <strong>Group:</strong> {{ group.name }} &nbsp;|&nbsp;
+            <strong>Tag ID:</strong> {{ bird.animal.tag_id }} &nbsp;|&nbsp;
+            <strong>Sex:</strong> {{ bird.animal.get_sex_display }}
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Name & Record ID</th>
+                    <th>Date Recorded</th>
+                    <th>Weight (lbs/kg)</th>
+                    <th>ADG (lbs/kg per day)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in bird.rows %}
+                <tr>
+                    <td>
+                        <strong>{{ bird.animal.name }}</strong><br>
+                    </td>
+                    <td>{{ row.date }}</td>
+                    <td>{{ row.weight }}</td>
+                    <td>
+                        {% if forloop.first %}
+                        <em>-</em>
+                        {% else %}
+                        {{ row.adg }}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% empty %}
+    <div>
+        <h2>No records found.</h2>
+        <p>No animal weights were found for this herd and template combination.</p>
+    </div>
+    {% endfor %}
+
+</body>
+
+</html>

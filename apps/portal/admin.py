@@ -102,4 +102,7 @@ class RecordTemplateAdmin(admin.ModelAdmin):
 
 @admin.register(LivestockRecord)
 class LivestockRecordAdmin(admin.ModelAdmin):
-    readonly_fields = ["public_id", "created_at"]
+    readonly_fields = [
+        "public_id",
+    ]  # "created_at"
+    fields = ["report_link", "template", "created_at", "data", "updated_at"]

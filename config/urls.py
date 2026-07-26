@@ -22,6 +22,7 @@ from django.urls import include, path
 
 from apps.users.views import StandardSignupView
 from apps.portal.views import tags_link_redirect
+from apps.export.views import export_herd_weights_zip, export_herd_weights_pdf
 
 urlpatterns = [
     path("", include("apps.pages.urls")),
@@ -32,6 +33,16 @@ urlpatterns = [
     path(
         "portal/",
         include(("apps.portal.urls", "portal"), namespace="portal"),
+    ),
+    path(
+        "export-weights/<slug:template_slug>/<slug:herd_slug>/",
+        export_herd_weights_zip,
+        name="export_herd_weights_zip",
+    ),
+    path(
+        "export-pdf/<slug:template_slug>/<slug:herd_slug>/",
+        export_herd_weights_pdf,
+        name="export_herd_weights_pdf",
     ),
 ]
 

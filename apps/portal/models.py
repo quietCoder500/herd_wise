@@ -254,10 +254,12 @@ class RecordTemplate(models.Model):
 
 class LivestockRecord(models.Model):
     public_id = models.UUIDField(default=uuid.uuid4, editable=False, db_index=True)
-    report_link = models.ForeignKey(ReportableModel, on_delete=models.CASCADE)
+    report_link = models.ForeignKey(
+        ReportableModel, on_delete=models.CASCADE, related_name="records"
+    )
     template = models.ForeignKey(RecordTemplate, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(editable=True)
+    updated_at = models.DateTimeField(editable=True)
 
     data = models.JSONField()
 
